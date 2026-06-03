@@ -1027,3 +1027,59 @@
 
 /* ===== UTILITY ===== */
 .poe2ph-hidden { display: none !important; }
+
+/* ===== TRASH PAPELERA ===== */
+.poe2ph-trash-bar {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-dim);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.poe2ph-trash-bar .poe2ph-btn-danger {
+  padding: 6px 10px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.poe2ph-trash-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.poe2ph-card:hover .poe2ph-trash-actions {
+  opacity: 1;
+}
+
+.poe2ph-restore-btn, .poe2ph-delete-perm-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.poe2ph-restore-btn:hover {
+  background: rgba(39, 174, 96, 0.10);
+  color: var(--green);
+}
+
+.poe2ph-delete-perm-btn:hover {
+  background: var(--red-bg);
+  color: var(--red);
+}

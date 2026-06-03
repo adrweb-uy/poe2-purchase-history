@@ -68,7 +68,7 @@
         title:      'NEW VERSION',
         text:       'POE2 Purchase History has been updated to version 0.1.0.',
       },
-      tabs: { history: 'History', settings: 'Settings' },
+      tabs: { history: 'History', trash: 'Trash', settings: 'Settings' },
       charBar: {
         label: 'Character:',
         all: 'All Characters',
@@ -95,6 +95,14 @@
         notes:     'Add a note…', delete: 'Delete',
         category:  'Category', searchUrl: 'Search URL',
         openSearch: 'Open search',
+        restore:   'Restore',
+        deletePermanent: 'Delete permanently',
+      },
+      trash: {
+        emptyBtn: 'Empty Trash',
+        emptyConfirm: 'Are you sure you want to empty the trash permanently?',
+        empty: 'Trash is empty.',
+        emptyHint: 'Deleted purchases will appear here.',
       },
       settings: {
         language:          'Language',
@@ -117,7 +125,9 @@
       },
       toast: {
         purchased: '✅ Purchase recorded!',
-        deleted:   'Purchase deleted.',
+        deleted:   'Moved to trash.',
+        restored:  'Purchase restored.',
+        trashCleared: 'Trash emptied.',
         cleared:   'History cleared.',
         exported:  'History exported.',
       },
@@ -129,7 +139,7 @@
         title:      'NUEVA VERSIÓN',
         text:       'POE2 Historial de Compras se actualizó a la versión 0.1.0.',
       },
-      tabs: { history: 'Historial', settings: 'Ajustes' },
+      tabs: { history: 'Historial', trash: 'Borrado', settings: 'Ajustes' },
       charBar: {
         label: 'Personaje:',
         all: 'Todos los Personajes',
@@ -156,6 +166,14 @@
         notes:     'Agregar nota…', delete: 'Eliminar',
         category:  'Categoría', searchUrl: 'URL de búsqueda',
         openSearch: 'Abrir búsqueda',
+        restore:   'Restaurar',
+        deletePermanent: 'Eliminar permanentemente',
+      },
+      trash: {
+        emptyBtn: 'Vaciar Papelera',
+        emptyConfirm: '¿Estás seguro de que querés vaciar la papelera permanentemente?',
+        empty: 'La papelera está vacía.',
+        emptyHint: 'Las compras eliminadas aparecerán acá.',
       },
       settings: {
         language:          'Idioma',
@@ -178,7 +196,9 @@
       },
       toast: {
         purchased: '✅ ¡Compra registrada!',
-        deleted:   'Compra eliminada.',
+        deleted:   'Compra enviada a la papelera.',
+        restored:  'Compra restaurada.',
+        trashCleared: 'Papelera vaciada.',
         cleared:   'Historial limpiado.',
         exported:  'Historial exportado.',
       },
@@ -255,7 +275,21 @@
     },
     async deletePurchase(id) {
       const list = await this.getPurchases();
+      const p = list.find(x => x.id === id);
+      if (p) { p.deleted = true; await this.setPurchases(list); }
+    },
+    async restorePurchase(id) {
+      const list = await this.getPurchases();
+      const p = list.find(x => x.id === id);
+      if (p) { p.deleted = false; await this.setPurchases(list); }
+    },
+    async deletePurchasePermanent(id) {
+      const list = await this.getPurchases();
       await this.setPurchases(list.filter(p => p.id !== id));
+    },
+    async clearTrash() {
+      const list = await this.getPurchases();
+      await this.setPurchases(list.filter(p => !p.deleted));
     },
     async updateNote(id, note) {
       const list = await this.getPurchases();
@@ -319,49 +353,50 @@
       // 1. Try to find the item header container
       const header = row.querySelector('.itemHeader') || row.querySelector('.item-header') || row.querySelector('[class*="Header"]');
       if (header) {
-        const nameEl = header.querySelector('.itemName') || header.querySelector('.item-name') || header.querySelector('[class*="Name"]');
-        const typeEl = header.querySelector('.typeLine') || header.querySelector('.type-line') || header.querySelector('[class*="Type"]');
-
-        const nameText = nameEl?.textContent?.trim() || '';
-        const typeText = typeEl?.textContent?.trim() || '';
-
-        // Exclude status words if mistakenly captured
-        if (nameText && nameText.toLowerCase() !== 'verified' && nameText.toLowerCase() !== 'online') {
-          if (typeText) return `${nameText} ${typeText}`;
-          return nameText;
-        }
-
-        // Fallback: parse lines of header text
+        // Splitting by lines in the header is extremely reliable for combining itemName and typeLine
         const lines = header.innerText.split('\n').map(s => s.trim()).filter(Boolean);
         const filteredLines = lines.filter(l => {
           const lLower = l.toLowerCase();
-          return lLower !== 'verified' && lLower !== 'online' && lLower !== 'offline';
+          return lLower !== 'verified' && lLower !== 'online' && lLower !== 'offline' && lLower !== 'corrupted' && lLower !== 'mirrored';
         });
         if (filteredLines.length > 0) {
-          return filteredLines.join(' ');
+          const uniqueLines = [];
+          for (const line of filteredLines) {
+            if (!uniqueLines.includes(line)) uniqueLines.push(line);
+          }
+          return uniqueLines.join(' ');
         }
       }
 
       // 2. Direct elements fallback
       const itemNameEl = row.querySelector('.itemName') || row.querySelector('.item-name') || row.querySelector('[class*="itemName"]');
       const typeLineEl = row.querySelector('.typeLine') || row.querySelector('.type-line') || row.querySelector('[class*="typeLine"]');
-      const itemName = itemNameEl?.textContent?.trim() || '';
-      const typeLine = typeLineEl?.textContent?.trim() || '';
+      const nameText = itemNameEl?.textContent?.trim() || '';
+      const typeText = typeLineEl?.textContent?.trim() || '';
 
-      if (itemName && itemName.toLowerCase() !== 'verified' && typeLine) {
-        return `${itemName} ${typeLine}`;
-      } else if (itemName && itemName.toLowerCase() !== 'verified') {
-        return itemName;
-      } else if (typeLine) {
-        return typeLine;
+      if (nameText && nameText.toLowerCase() !== 'verified') {
+        if (typeText && typeText !== nameText) return `${nameText} ${typeText}`;
+        return nameText;
+      } else if (typeText) {
+        return typeText;
       }
 
       // 3. Fallback to row text lines (ignoring status words, account names, and prices)
       const lines = (row.innerText || '').split('\n').map(s => s.trim()).filter(Boolean);
       const filtered = lines.filter(l => {
         const lLower = l.toLowerCase();
-        return lLower !== 'verified' && lLower !== 'online' && lLower !== 'offline' && !lLower.startsWith('acc:') && !l.includes('Exalted') && !l.includes('Chaos') && !l.includes('Divine');
+        return lLower !== 'verified' && lLower !== 'online' && lLower !== 'offline' &&
+               !lLower.startsWith('acc:') && !l.includes('Exalted') && !l.includes('Chaos') &&
+               !l.includes('Divine') && !l.includes('Mirror') && !l.includes('Gold') &&
+               lLower !== 'corrupted' && lLower !== 'mirrored';
       });
+
+      if (filtered.length >= 2) {
+        const second = filtered[1];
+        if (second.length > 2 && !/^\d+/.test(second) && !second.includes('Level') && !second.includes('Requires')) {
+          return `${filtered[0]} ${filtered[1]}`;
+        }
+      }
       return filtered[0] || 'Unknown Item';
     },
 
@@ -642,6 +677,12 @@
               </svg>
               ${t('tabs.history')}
             </button>
+            <button class="poe2ph-tab" data-tab="trash">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+              ${t('tabs.trash')}
+            </button>
             <button class="poe2ph-tab" data-tab="settings">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
                 <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
@@ -696,6 +737,19 @@
             </div>
 
             <div class="poe2ph-history-list" id="poe2ph-history-list"></div>
+          </div>
+
+          <!-- Tab: Trash -->
+          <div class="poe2ph-tab-content" id="tab-trash">
+            <div class="poe2ph-trash-bar">
+              <button class="poe2ph-btn poe2ph-btn-danger" id="poe2ph-empty-trash-btn">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                ${t('trash.emptyBtn')}
+              </button>
+            </div>
+            <div class="poe2ph-history-list" id="poe2ph-trash-list"></div>
           </div>
 
           <!-- Tab: Settings -->
@@ -782,6 +836,8 @@
 
       this.shadow.querySelectorAll('.poe2ph-tab').forEach(btn =>
         btn.addEventListener('click', () => this._switchTab(btn.dataset.tab)));
+
+      $('poe2ph-empty-trash-btn')?.addEventListener('click', () => this._emptyTrash());
 
       this._attachSettingsListeners();
       this._attachCharacterListeners();
@@ -875,6 +931,12 @@
       this.shadow.querySelectorAll('.poe2ph-tab-content').forEach(c =>
         c.classList.remove('poe2ph-tab-active'));
       this.shadow.getElementById(`tab-${name}`)?.classList.add('poe2ph-tab-active');
+
+      if (name === 'history') {
+        this._renderHistory();
+      } else if (name === 'trash') {
+        this._renderTrash();
+      }
     }
 
     // ----------------------------------------------------------
@@ -887,8 +949,9 @@
 
       const activeChar = this.settings.activeCharacterId || 'all';
 
-      // Filter purchases
+      // Filter purchases (exclude soft-deleted ones)
       const filtered = this.purchases.filter(p => {
+        if (p.deleted) return false;
         if (activeChar === 'all') return true;
         if (activeChar === 'none') return !p.characterId || p.characterId === 'none';
         return p.characterId === activeChar;
@@ -1039,15 +1102,169 @@
         </div>`;
     }
 
+    _renderTrash() {
+      const list = this.shadow.getElementById('poe2ph-trash-list');
+      if (!list) return;
+
+      const deletedPurchases = this.purchases.filter(p => p.deleted === true);
+
+      if (!deletedPurchases.length) {
+        list.innerHTML = `
+          <div class="poe2ph-empty">
+            ${CHEST_SVG(52, 52)}
+            <p class="poe2ph-empty-text">${t('trash.empty')}</p>
+            <p class="poe2ph-empty-hint">${t('trash.emptyHint')}</p>
+          </div>`;
+        const emptyBtn = this.shadow.getElementById('poe2ph-empty-trash-btn');
+        if (emptyBtn) emptyBtn.style.display = 'none';
+        return;
+      }
+
+      const emptyBtn = this.shadow.getElementById('poe2ph-empty-trash-btn');
+      if (emptyBtn) emptyBtn.style.display = 'flex';
+
+      list.innerHTML = deletedPurchases.map(p => this._trashCardHTML(p)).join('');
+
+      // Attach card listeners
+      list.querySelectorAll('.poe2ph-card').forEach(card => {
+        card.addEventListener('click', () => card.classList.toggle('poe2ph-card-expanded'));
+      });
+      list.querySelectorAll('.poe2ph-restore-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          this._restorePurchase(btn.dataset.id);
+        });
+      });
+      list.querySelectorAll('.poe2ph-delete-perm-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          this._deletePurchasePermanently(btn.dataset.id);
+        });
+      });
+      list.querySelectorAll('.poe2ph-open-search').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          window.open(btn.dataset.url, '_blank');
+        });
+      });
+    }
+
+    _trashCardHTML(p) {
+      const date  = new Date(p.timestamp);
+      const ds    = date.toLocaleDateString();
+      const ts    = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const icon  = CATEGORY_ICONS[p.category] || '📦';
+      const cname = t(`categories.${p.category}`) || p.category;
+      const curr  = CURRENCY_DISPLAY[p.price?.currency] || p.price?.currency || '?';
+
+      const char = this.characters.find(c => c.id === p.characterId);
+      const charText = char ? `${CLASS_INFO[char.class]?.emoji || '👤'} ${char.name}` : '';
+
+      let iconHTML = `<div class="poe2ph-card-icon">${icon}</div>`;
+      if (p.imageUrl) {
+        iconHTML = `<div class="poe2ph-card-img-container"><img class="poe2ph-card-img" src="${this._esc(p.imageUrl)}" alt=""></div>`;
+      }
+
+      const rarityClass = `poe2ph-rarity-${p.rarity || 'normal'}`;
+
+      return `
+        <div class="poe2ph-card" data-id="${p.id}">
+          <div class="poe2ph-card-main">
+            ${iconHTML}
+            <div class="poe2ph-card-info">
+              <div class="poe2ph-card-name ${rarityClass}" title="${this._esc(p.itemName)}">${this._esc(p.itemName)}</div>
+              <div class="poe2ph-card-meta">
+                <span class="poe2ph-price-badge">${p.price?.amount} ${curr}</span>
+                <span class="poe2ph-date">${ds} ${ts}</span>
+                ${charText ? `<span class="poe2ph-char-badge" title="${t('charBar.charLabel')}: ${this._esc(char.name)}">${charText}</span>` : ''}
+              </div>
+            </div>
+            <div class="poe2ph-trash-actions">
+              <button class="poe2ph-restore-btn" data-id="${p.id}" title="${t('history.restore')}">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                  <path d="M3 3v5h5"/>
+                </svg>
+              </button>
+              <button class="poe2ph-delete-perm-btn" data-id="${p.id}" title="${t('history.deletePermanent')}">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="poe2ph-card-details">
+            <div class="poe2ph-detail-row">
+              <span class="poe2ph-detail-label">${t('history.seller')}</span>
+              <span class="poe2ph-detail-value">${this._esc(p.seller)}</span>
+            </div>
+            <div class="poe2ph-detail-row">
+              <span class="poe2ph-detail-label">${t('history.league')}</span>
+              <span class="poe2ph-detail-value">${this._esc(p.league)}</span>
+            </div>
+            <div class="poe2ph-detail-row">
+              <span class="poe2ph-detail-label">${t('history.category')}</span>
+              <span class="poe2ph-detail-value">${icon} ${cname}</span>
+            </div>
+            ${p.stats?.rawText ? `
+            <div class="poe2ph-detail-row">
+              <span class="poe2ph-detail-label">Stats</span>
+              <span class="poe2ph-detail-value poe2ph-stats-text">${this._esc(p.stats.rawText.slice(0,250))}</span>
+            </div>` : ''}
+            ${p.searchUrl ? `
+            <div class="poe2ph-detail-row">
+              <span class="poe2ph-detail-label">${t('history.searchUrl')}</span>
+              <button class="poe2ph-open-search poe2ph-link-btn" data-url="${this._esc(p.searchUrl)}">
+                🔗 ${t('history.openSearch')}
+              </button>
+            </div>` : ''}
+            ${p.notes ? `
+            <div class="poe2ph-detail-row" style="margin-top: 4px;">
+              <span class="poe2ph-detail-label">Notes</span>
+              <span class="poe2ph-detail-value" style="font-style: italic;">${this._esc(p.notes)}</span>
+            </div>` : ''}
+          </div>
+        </div>`;
+    }
+
     // ----------------------------------------------------------
     //  Actions
     // ----------------------------------------------------------
 
     async _deletePurchase(id) {
       await Storage.deletePurchase(id);
+      const purchase = this.purchases.find(p => p.id === id);
+      if (purchase) purchase.deleted = true;
+      this._renderHistory();
+      if (this.activeTab === 'trash') this._renderTrash();
+      this._toast(t('toast.deleted'));
+    }
+
+    async _restorePurchase(id) {
+      await Storage.restorePurchase(id);
+      const purchase = this.purchases.find(p => p.id === id);
+      if (purchase) purchase.deleted = false;
+      this._renderHistory();
+      if (this.activeTab === 'trash') this._renderTrash();
+      this._toast(t('toast.restored'));
+    }
+
+    async _deletePurchasePermanently(id) {
+      await Storage.deletePurchasePermanent(id);
       this.purchases = this.purchases.filter(p => p.id !== id);
       this._renderHistory();
-      this._toast(t('toast.deleted'));
+      if (this.activeTab === 'trash') this._renderTrash();
+      this._toast(_lang === 'es' ? 'Compra eliminada definitivamente.' : 'Purchase permanently deleted.');
+    }
+
+    async _emptyTrash() {
+      if (!confirm(t('trash.emptyConfirm'))) return;
+      await Storage.clearTrash();
+      this.purchases = this.purchases.filter(p => !p.deleted);
+      this._renderHistory();
+      if (this.activeTab === 'trash') this._renderTrash();
+      this._toast(t('toast.trashCleared'));
     }
 
     async _setLanguage(lang) {
