@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>POE2 Purchase History</title>
+  <link rel="stylesheet" href="popup.css"/>
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <div class="popup-header">
+      <div class="popup-logo">
+        <svg width="36" height="36" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="14" width="26" height="14" rx="2.5" fill="#2e1e08" stroke="#c8a455" stroke-width="1.4"/>
+          <rect x="3" y="7" width="26" height="9" rx="2.5" fill="#1e1004" stroke="#c8a455" stroke-width="1.4"/>
+          <rect x="5" y="9" width="22" height="2" rx="1" fill="#c8a455" opacity="0.15"/>
+          <rect x="3" y="14" width="26" height="2.5" fill="#c8a455" opacity="0.20"/>
+          <rect x="13" y="12.5" width="6" height="6" rx="1.2" fill="#c8a455" opacity="0.75"/>
+          <circle cx="16" cy="15" r="1.2" fill="#1e1004"/>
+          <rect x="15.4" y="15" width="1.2" height="2" rx="0.4" fill="#1e1004"/>
+          <circle cx="6"  cy="20" r="1" fill="#c8a455" opacity="0.6"/>
+          <circle cx="26" cy="20" r="1" fill="#c8a455" opacity="0.6"/>
+          <circle cx="6"  cy="24" r="1" fill="#c8a455" opacity="0.6"/>
+          <circle cx="26" cy="24" r="1" fill="#c8a455" opacity="0.6"/>
+        </svg>
+      </div>
+      <div class="popup-title-block">
+        <h1 class="popup-title">POE2 Purchase History</h1>
+        <p class="popup-subtitle">Trade Companion</p>
+      </div>
+    </div>
+
+    <div class="popup-divider"></div>
+
+    <!-- Stats -->
+    <div class="popup-stats">
+      <div class="popup-stat">
+        <span class="popup-stat-value" id="stat-total">—</span>
+        <span class="popup-stat-label">Total Purchases</span>
+      </div>
+      <div class="popup-stat-sep"></div>
+      <div class="popup-stat">
+        <span class="popup-stat-value" id="stat-today">—</span>
+        <span class="popup-stat-label">Today</span>
+      </div>
+    </div>
+
+    <div class="popup-divider"></div>
+
+    <!-- Last purchase -->
+    <div class="popup-last" id="popup-last">
+      <p class="popup-last-label">Last Purchase</p>
+      <div id="popup-last-item" class="popup-last-item">
+        <span class="popup-last-empty">No purchases yet.</span>
+      </div>
+    </div>
+
+    <div class="popup-divider"></div>
+
+    <!-- CTA -->
+    <div class="popup-footer">
+      <a class="popup-cta" id="popup-open-trade" href="https://www.pathofexile.com/trade2" target="_blank">
+        Open Trade Site →
+      </a>
+      <p class="popup-hint">Open the trade site to use the panel.</p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
