@@ -1,1 +1,1 @@
-# -poe2-purchase-history
+# poe2-purchase-history
