@@ -45,7 +45,8 @@
     {
       "resources": [
         "content/content.css",
-        "icons/*.png"
+        "icons/*.png",
+        "popup/flags/*.png"
       ],
       "matches": [
         "*://www.pathofexile.com/*"

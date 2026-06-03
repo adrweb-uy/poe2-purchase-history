@@ -910,9 +910,14 @@
   background: var(--bg-secondary);
 }
 
-.poe2ph-dropdown-trigger-flag {
-  font-size: 18px;
-  line-height: 1;
+.poe2ph-dropdown-flag-img {
+  width: 20px;
+  height: 13px;
+  object-fit: cover;
+  border-radius: 1.5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  flex-shrink: 0;
+  display: block;
 }
 
 .poe2ph-dropdown-trigger-name {
@@ -989,10 +994,7 @@
   background: rgba(200, 164, 85, 0.05);
 }
 
-.poe2ph-dropdown-item-flag {
-  font-size: 18px;
-  line-height: 1;
-}
+/* Image flag styles placeholder to prevent unused errors */
 
 .poe2ph-dropdown-item-name {
   flex: 1;

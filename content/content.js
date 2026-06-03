@@ -1249,14 +1249,14 @@
 
     _settingsHTML() {
       const langs = [
-        { code:'en', flag:'🇬🇧', name:'English',   engName:'English' },
-        { code:'es', flag:'🇪🇸', name:'Español',   engName:'Spanish' },
-        { code:'pt', flag:'🇧🇷', name:'Português', engName:'Portuguese' },
-        { code:'de', flag:'🇩🇪', name:'Deutsch',   engName:'German' },
-        { code:'fr', flag:'🇫🇷', name:'Français',  engName:'French' },
-        { code:'ru', flag:'🇷🇺', name:'Русский',   engName:'Russian' },
-        { code:'ja', flag:'🇯🇵', name:'日本語',     engName:'Japanese' },
-        { code:'ko', flag:'🇰🇷', name:'한국어',     engName:'Korean' },
+        { code:'en', flagFile:'gb.png', name:'English',   engName:'English' },
+        { code:'es', flagFile:'es.png', name:'Español',   engName:'Spanish' },
+        { code:'pt', flagFile:'br.png', name:'Português', engName:'Portuguese' },
+        { code:'de', flagFile:'de.png', name:'Deutsch',   engName:'German' },
+        { code:'fr', flagFile:'fr.png', name:'Français',  engName:'French' },
+        { code:'ru', flagFile:'ru.png', name:'Русский',   engName:'Russian' },
+        { code:'ja', flagFile:'jp.png', name:'日本語',     engName:'Japanese' },
+        { code:'ko', flagFile:'kr.png', name:'한국어',     engName:'Korean' },
       ];
       const pos = this.settings.panelPosition;
       const activeLang = langs.find(l => l.code === this.settings.language) || langs[0];
@@ -1271,7 +1271,7 @@
             
             <div class="poe2ph-dropdown poe2ph-lang-dropdown" id="poe2ph-lang-dropdown">
               <button class="poe2ph-dropdown-trigger" id="poe2ph-lang-trigger" aria-haspopup="listbox" aria-expanded="false">
-                <span class="poe2ph-dropdown-trigger-flag">${activeLang.flag}</span>
+                <img class="poe2ph-dropdown-flag-img" src="${chrome.runtime.getURL('popup/flags/' + activeLang.flagFile)}" alt="">
                 <span class="poe2ph-dropdown-trigger-name">${activeLang.name.toUpperCase()}</span>
                 <svg class="poe2ph-dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M6 9l6 6 6-6"/>
@@ -1280,7 +1280,7 @@
               <div class="poe2ph-dropdown-menu" id="poe2ph-lang-menu">
                 ${langs.map(l => `
                   <div class="poe2ph-dropdown-item${this.settings.language === l.code ? ' poe2ph-active' : ''}" data-lang="${l.code}">
-                    <span class="poe2ph-dropdown-item-flag">${l.flag}</span>
+                    <img class="poe2ph-dropdown-flag-img" src="${chrome.runtime.getURL('popup/flags/' + l.flagFile)}" alt="">
                     <span class="poe2ph-dropdown-item-name">${l.name.toUpperCase()}</span>
                     <span class="poe2ph-dropdown-item-sub">${l.engName}</span>
                   </div>
