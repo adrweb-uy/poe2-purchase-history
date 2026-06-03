@@ -41,6 +41,21 @@
     alch: 'Alch', fusing: 'Fusing', alteration: 'Alt',
   };
 
+  const CLASS_INFO = {
+    witch:     { name: 'Witch', emoji: '🧙‍♀️' },
+    ranger:    { name: 'Ranger', emoji: '🏹' },
+    mercenary: { name: 'Mercenary', emoji: '🎯' },
+    warrior:   { name: 'Warrior', emoji: '🛡️' },
+    monk:      { name: 'Monk', emoji: '🧘' },
+    sorceress: { name: 'Sorceress', emoji: '⚡' },
+    druid:     { name: 'Druid', emoji: '🐻' },
+    huntress:  { name: 'Huntress', emoji: '🐆' },
+    shadow:    { name: 'Shadow', emoji: '👤' },
+    templar:   { name: 'Templar', emoji: '⛪' },
+    marauder:  { name: 'Marauder', emoji: '💪' },
+    duelist:   { name: 'Duelist', emoji: '🤺' },
+  };
+
   // ============================================================
   //  TRANSLATIONS  (EN + ES inline for MVP)
   // ============================================================
@@ -54,6 +69,25 @@
         text:       'POE2 Purchase History has been updated to version 0.1.0.',
       },
       tabs: { history: 'History', settings: 'Settings' },
+      charBar: {
+        label: 'Character:',
+        all: 'All Characters',
+        none: 'No Character',
+        newBtn: 'New',
+        placeholder: 'Character name...',
+        createBtn: 'Create',
+        cancelBtn: 'Cancel',
+        selectClass: 'Select Class',
+        charLabel: 'Character',
+        moveTo: 'Move to:',
+        titleNew: 'Create New Character',
+      },
+      classes: {
+        witch: 'Witch', ranger: 'Ranger', mercenary: 'Mercenary',
+        warrior: 'Warrior', monk: 'Monk', sorceress: 'Sorceress',
+        druid: 'Druid', huntress: 'Huntress', shadow: 'Shadow',
+        templar: 'Templar', marauder: 'Marauder', duelist: 'Duelist',
+      },
       history: {
         empty:     'No purchases recorded yet.',
         emptyHint: "Click 'Travel to Hideout' on any trade result to record a purchase automatically.",
@@ -96,6 +130,25 @@
         text:       'POE2 Historial de Compras se actualizó a la versión 0.1.0.',
       },
       tabs: { history: 'Historial', settings: 'Ajustes' },
+      charBar: {
+        label: 'Personaje:',
+        all: 'Todos los Personajes',
+        none: 'Sin Personaje',
+        newBtn: 'Nuevo',
+        placeholder: 'Nombre del personaje...',
+        createBtn: 'Crear',
+        cancelBtn: 'Cancelar',
+        selectClass: 'Elegí Clase',
+        charLabel: 'Personaje',
+        moveTo: 'Mover a:',
+        titleNew: 'Crear Nuevo Personaje',
+      },
+      classes: {
+        witch: 'Bruja', ranger: 'Cazadora', mercenary: 'Mercenario',
+        warrior: 'Guerrero', monk: 'Monje', sorceress: 'Hechicera',
+        druid: 'Druida', huntress: 'Cazadora de Lanzas', shadow: 'Sombra',
+        templar: 'Templario', marauder: 'Karui', duelist: 'Duelista',
+      },
       history: {
         empty:     'Aún no hay compras registradas.',
         emptyHint: "Hacé clic en 'Viajar al Escondite' en un resultado de trade para registrar la compra.",
@@ -165,8 +218,10 @@
     },
     async getPurchases()         { return this._get('poe2ph_purchases', []); },
     async setPurchases(list)     { return this._set('poe2ph_purchases', list); },
-    async getSettings()          { return this._get('poe2ph_settings', { language: 'en', panelPosition: 'right', sidebarOpen: false }); },
+    async getSettings()          { return this._get('poe2ph_settings', { language: 'en', panelPosition: 'right', sidebarOpen: false, activeCharacterId: 'all' }); },
     async saveSettings(s)        { return this._set('poe2ph_settings', s); },
+    async getCharacters()        { return this._get('poe2ph_characters', []); },
+    async setCharacters(list)    { return this._set('poe2ph_characters', list); },
 
     async addPurchase(item) {
       const list = await this.getPurchases();
@@ -342,10 +397,12 @@
 
   class PurchaseHistoryUI {
     constructor() {
-      this.settings  = { language: 'en', panelPosition: 'right' };
+      this.settings  = { language: 'en', panelPosition: 'right', sidebarOpen: false, activeCharacterId: 'all' };
       this.purchases = [];
+      this.characters = [];
       this.isOpen    = false;
       this.activeTab = 'history';
+      this.selectedClass = null;
       this.host      = null;   // Shadow host element
       this.shadow    = null;   // ShadowRoot
       this.root      = null;   // .poe2ph-container inside shadow
@@ -359,7 +416,9 @@
     async init() {
       this.settings  = await Storage.getSettings();
       this.purchases = await Storage.getPurchases();
+      this.characters = await Storage.getCharacters();
       _lang          = this.settings.language || 'en';
+      this.selectedClass = null;
 
       this._buildDOM();
       this._attachListeners();
@@ -498,6 +557,48 @@
 
           <!-- Tab: History -->
           <div class="poe2ph-tab-content poe2ph-tab-active" id="tab-history">
+            <!-- Character selector bar -->
+            <div class="poe2ph-char-bar">
+              <div class="poe2ph-char-selector">
+                <span class="poe2ph-char-label">${t('charBar.label')}</span>
+                <select class="poe2ph-char-select" id="poe2ph-char-select">
+                  <option value="all" ${this.settings.activeCharacterId === 'all' ? 'selected' : ''}>${t('charBar.all')}</option>
+                  ${this.characters.map(c => `
+                    <option value="${c.id}" ${this.settings.activeCharacterId === c.id ? 'selected' : ''}>
+                      ${CLASS_INFO[c.class]?.emoji || '👤'} ${c.name}
+                    </option>
+                  `).join('')}
+                  <option value="none" ${this.settings.activeCharacterId === 'none' ? 'selected' : ''}>${t('charBar.none')}</option>
+                </select>
+              </div>
+              <button class="poe2ph-char-add-btn" id="poe2ph-char-add-btn" title="${t('charBar.newBtn')}">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+                ${t('charBar.newBtn')}
+              </button>
+            </div>
+
+            <!-- Inline character creation form (hidden by default) -->
+            <div class="poe2ph-char-form poe2ph-hidden" id="poe2ph-char-form">
+              <div class="poe2ph-char-form-title">${t('charBar.titleNew')}</div>
+              <input type="text" class="poe2ph-char-name-input" id="poe2ph-char-name-input" placeholder="${t('charBar.placeholder')}">
+              
+              <div class="poe2ph-class-grid">
+                ${Object.entries(CLASS_INFO).map(([key, value]) => `
+                  <button class="poe2ph-class-option" data-class="${key}" title="${t(`classes.${key}`)}">
+                    <span class="poe2ph-class-emoji">${value.emoji}</span>
+                    <span class="poe2ph-class-name">${t(`classes.${key}`)}</span>
+                  </button>
+                `).join('')}
+              </div>
+
+              <div class="poe2ph-char-form-actions">
+                <button class="poe2ph-btn poe2ph-btn-primary" id="poe2ph-char-save-btn">${t('charBar.createBtn')}</button>
+                <button class="poe2ph-btn" id="poe2ph-char-cancel-btn">${t('charBar.cancelBtn')}</button>
+              </div>
+            </div>
+
             <div class="poe2ph-history-list" id="poe2ph-history-list"></div>
           </div>
 
@@ -587,6 +688,7 @@
         btn.addEventListener('click', () => this._switchTab(btn.dataset.tab)));
 
       this._attachSettingsListeners();
+      this._attachCharacterListeners();
     }
 
     _attachSettingsListeners() {
@@ -687,7 +789,16 @@
       const list = this.shadow.getElementById('poe2ph-history-list');
       if (!list) return;
 
-      if (!this.purchases.length) {
+      const activeChar = this.settings.activeCharacterId || 'all';
+
+      // Filter purchases
+      const filtered = this.purchases.filter(p => {
+        if (activeChar === 'all') return true;
+        if (activeChar === 'none') return !p.characterId || p.characterId === 'none';
+        return p.characterId === activeChar;
+      });
+
+      if (!filtered.length) {
         list.innerHTML = `
           <div class="poe2ph-empty">
             ${CHEST_SVG(52, 52)}
@@ -697,7 +808,7 @@
         return;
       }
 
-      list.innerHTML = this.purchases.map(p => this._cardHTML(p)).join('');
+      list.innerHTML = filtered.map(p => this._cardHTML(p)).join('');
 
       // Attach card listeners
       list.querySelectorAll('.poe2ph-card').forEach(card => {
@@ -719,6 +830,32 @@
           window.open(btn.dataset.url, '_blank');
         });
       });
+
+      // Character re-assignment in expanded cards
+      list.querySelectorAll('.poe2ph-card-char-select').forEach(sel => {
+        sel.addEventListener('click', e => e.stopPropagation());
+        sel.addEventListener('change', async () => {
+          const purchaseId = sel.dataset.id;
+          const characterId = sel.value;
+
+          // Update in memory
+          const purchase = this.purchases.find(x => x.id === purchaseId);
+          if (purchase) {
+            purchase.characterId = characterId;
+
+            // Save to storage
+            const allPurchases = await Storage.getPurchases();
+            const pStore = allPurchases.find(x => x.id === purchaseId);
+            if (pStore) {
+              pStore.characterId = characterId;
+              await Storage.setPurchases(allPurchases);
+            }
+          }
+
+          // Re-render history to reflect changes
+          this._renderHistory();
+        });
+      });
     }
 
     _cardHTML(p) {
@@ -729,6 +866,9 @@
       const cname = t(`categories.${p.category}`) || p.category;
       const curr  = CURRENCY_DISPLAY[p.price?.currency] || p.price?.currency || '?';
 
+      const char = this.characters.find(c => c.id === p.characterId);
+      const charText = char ? `${CLASS_INFO[char.class]?.emoji || '👤'} ${char.name}` : '';
+
       return `
         <div class="poe2ph-card" data-id="${p.id}">
           <div class="poe2ph-card-main">
@@ -738,6 +878,7 @@
               <div class="poe2ph-card-meta">
                 <span class="poe2ph-price-badge">${p.price?.amount} ${curr}</span>
                 <span class="poe2ph-date">${ds} ${ts}</span>
+                ${charText ? `<span class="poe2ph-char-badge" title="${t('charBar.charLabel')}: ${this._esc(char.name)}">${charText}</span>` : ''}
               </div>
             </div>
             <button class="poe2ph-delete-btn" data-id="${p.id}" title="${t('history.delete')}">
@@ -760,6 +901,20 @@
               <span class="poe2ph-detail-label">${t('history.category')}</span>
               <span class="poe2ph-detail-value">${icon} ${cname}</span>
             </div>
+
+            <!-- Re-assign Character Dropdown -->
+            <div class="poe2ph-detail-row">
+              <span class="poe2ph-detail-label">${t('charBar.moveTo')}</span>
+              <select class="poe2ph-card-char-select" data-id="${p.id}">
+                <option value="none" ${!p.characterId || p.characterId === 'none' ? 'selected' : ''}>${t('charBar.none')}</option>
+                ${this.characters.map(c => `
+                  <option value="${c.id}" ${p.characterId === c.id ? 'selected' : ''}>
+                    ${CLASS_INFO[c.class]?.emoji || '👤'} ${c.name}
+                  </option>
+                `).join('')}
+              </select>
+            </div>
+
             ${p.stats?.rawText ? `
             <div class="poe2ph-detail-row">
               <span class="poe2ph-detail-label">Stats</span>
@@ -863,6 +1018,11 @@
 
     async recordPurchase(btn) {
       const item = Extractor.extract(btn);
+
+      // Assign currently active character ID (default to 'none' if showing 'all' or 'none')
+      const activeChar = this.settings.activeCharacterId || 'all';
+      item.characterId = (activeChar === 'all' || activeChar === 'none') ? 'none' : activeChar;
+
       await Storage.addPurchase(item);
       this.purchases.unshift(item);
       this._renderHistory();
@@ -911,7 +1071,11 @@
 
     _trackButton(el) {
       el.__poe2ph = true;
-      el.addEventListener('click', () => this.recordPurchase(el), { once: false });
+      el.addEventListener('click', (e) => {
+        if (e.__poe2ph_handled) return;
+        e.__poe2ph_handled = true;
+        this.recordPurchase(el);
+      }, { once: false });
     }
 
     // ----------------------------------------------------------
@@ -942,6 +1106,98 @@
         setTimeout(() => {
           banner.classList.add('poe2ph-hidden');
         }, 250);
+      }
+    }
+
+    _attachCharacterListeners() {
+      const $ = id => this.shadow.getElementById(id);
+
+      // Select active character change
+      const select = $('poe2ph-char-select');
+      if (select) {
+        select.addEventListener('change', () => {
+          this.settings.activeCharacterId = select.value;
+          Storage.saveSettings(this.settings).catch(console.error);
+          this._renderHistory();
+        });
+      }
+
+      // Show creation form
+      $('poe2ph-char-add-btn')?.addEventListener('click', () => {
+        const form = $('poe2ph-char-form');
+        form.classList.remove('poe2ph-hidden');
+        $('poe2ph-char-name-input').focus();
+      });
+
+      // Cancel character creation
+      $('poe2ph-char-cancel-btn')?.addEventListener('click', () => {
+        this._resetCharForm();
+      });
+
+      // Class option buttons selection
+      this.shadow.querySelectorAll('.poe2ph-class-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          this.shadow.querySelectorAll('.poe2ph-class-option').forEach(b => b.classList.remove('poe2ph-active'));
+          btn.classList.add('poe2ph-active');
+          this.selectedClass = btn.dataset.class;
+        });
+      });
+
+      // Save character
+      $('poe2ph-char-save-btn')?.addEventListener('click', () => this._saveNewCharacter());
+    }
+
+    _resetCharForm() {
+      const $ = id => this.shadow.getElementById(id);
+      const form = $('poe2ph-char-form');
+      if (form) {
+        form.classList.add('poe2ph-hidden');
+        $('poe2ph-char-name-input').value = '';
+        this.shadow.querySelectorAll('.poe2ph-class-option').forEach(b => b.classList.remove('poe2ph-active'));
+        this.selectedClass = null;
+      }
+    }
+
+    async _saveNewCharacter() {
+      const $ = id => this.shadow.getElementById(id);
+      const nameInp = $('poe2ph-char-name-input');
+      const name = nameInp?.value?.trim() || '';
+
+      if (!name) {
+        alert(_lang === 'es' ? 'Por favor ingresá un nombre' : 'Please enter a name');
+        return;
+      }
+
+      if (!this.selectedClass) {
+        alert(_lang === 'es' ? 'Por favor elegí una clase' : 'Please select a class');
+        return;
+      }
+
+      const newChar = {
+        id: 'char_' + Date.now(),
+        name: name,
+        class: this.selectedClass,
+        created: new Date().toISOString()
+      };
+
+      this.characters.push(newChar);
+      await Storage.setCharacters(this.characters);
+
+      // Automatically set as active character
+      this.settings.activeCharacterId = newChar.id;
+      await Storage.saveSettings(this.settings);
+
+      // Reset form fields
+      this._resetCharForm();
+
+      // Rebuild UI container to update dropdown options
+      const wasOpen = this.isOpen;
+      this.root.innerHTML = this._containerHTML();
+      this._attachListeners();
+      this._renderHistory();
+      if (wasOpen) {
+        this.shadow.getElementById('poe2ph-panel')?.classList.add('poe2ph-panel-open');
+        this._switchTab(this.activeTab);
       }
     }
 

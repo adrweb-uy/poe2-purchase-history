@@ -333,6 +333,210 @@
   background: var(--border-mid);
 }
 
+
+/* ===== CHARACTER MANAGEMENT ===== */
+.poe2ph-char-bar {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-dim);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.poe2ph-char-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.poe2ph-char-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.poe2ph-char-select {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dim);
+  border-radius: 5px;
+  padding: 5px 8px;
+  color: var(--gold-light);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  flex: 1;
+  max-width: 170px;
+}
+.poe2ph-char-select:focus {
+  border-color: var(--gold-deep);
+  box-shadow: 0 0 6px rgba(106, 78, 18, 0.25);
+}
+
+.poe2ph-char-add-btn {
+  background: rgba(200, 164, 85, 0.08);
+  border: 1px solid var(--gold-deep);
+  border-radius: 5px;
+  color: var(--gold-light);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 6px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.poe2ph-char-add-btn:hover {
+  background: rgba(200, 164, 85, 0.16);
+  border-color: var(--gold-mid);
+  box-shadow: 0 0 8px rgba(200, 164, 85, 0.15);
+}
+.poe2ph-char-add-btn svg {
+  margin-top: -1px;
+}
+
+/* Inline Character Form */
+.poe2ph-char-form {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-mid);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: poe2ph-slide-down 0.2s var(--ease);
+}
+
+@keyframes poe2ph-slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.poe2ph-char-form-title {
+  font-family: "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.poe2ph-char-name-input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 12px;
+  padding: 6px 10px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.poe2ph-char-name-input:focus {
+  border-color: var(--gold-deep);
+}
+
+.poe2ph-class-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+.poe2ph-class-grid::-webkit-scrollbar { width: 3px; }
+.poe2ph-class-grid::-webkit-scrollbar-track { background: var(--bg-primary); }
+.poe2ph-class-grid::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 2px; }
+
+.poe2ph-class-option {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  padding: 5px 2px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  transition: all 0.18s;
+  color: var(--text-muted);
+}
+.poe2ph-class-option:hover {
+  border-color: var(--border-mid);
+  color: var(--text-secondary);
+}
+.poe2ph-class-option.poe2ph-active {
+  border-color: var(--gold-dark) !important;
+  background: rgba(200, 164, 85, 0.08) !important;
+  color: var(--gold-light) !important;
+}
+
+.poe2ph-class-emoji {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.poe2ph-class-name {
+  font-size: 8.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.poe2ph-char-form-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+.poe2ph-char-form-actions .poe2ph-btn {
+  padding: 5px 12px;
+  font-size: 10px;
+}
+
+/* Card Badge */
+.poe2ph-char-badge {
+  background: rgba(200, 164, 85, 0.06);
+  border: 1px solid rgba(200, 164, 85, 0.12);
+  color: var(--gold-mid);
+  font-size: 9.5px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Reassign selector inside card details */
+.poe2ph-card-char-select {
+  background: var(--bg-input);
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  padding: 4px 6px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  outline: none;
+  cursor: pointer;
+  max-width: 160px;
+  transition: border-color 0.2s;
+}
+.poe2ph-card-char-select:focus {
+  border-color: var(--gold-deep);
+}
+
 /* ===== HISTORY LIST ===== */
 .poe2ph-history-list {
   padding: 12px;
