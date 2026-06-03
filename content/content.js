@@ -334,16 +334,24 @@
 
     /** Walk up the DOM looking for a container that has both a price number and some content */
     _findRow(btn) {
-      let el = btn?.parentElement;
-      for (let depth = 0; depth < 20 && el; depth++) {
-        const txt = el.innerText || '';
-        const hasPrice = /\d+\s*(divine|chaos|exalted|mirror|gold|vaal|alch)/i.test(txt);
-        if (hasPrice && el.querySelectorAll('*').length > 5) return el;
+      if (!btn) return null;
+
+      // 1. Direct match with standard PoE trade result containers
+      const resultRow = btn.closest('.result') || btn.closest('.row') || btn.closest('.itemElement');
+      if (resultRow) return resultRow;
+
+      // 2. Walk up and find the first ancestor that contains a header container (bulletproof)
+      let el = btn.parentElement;
+      for (let depth = 0; depth < 15 && el; depth++) {
+        if (el.querySelector('.itemHeader') || el.querySelector('.item-header') || el.querySelector('[class*="Header"]')) {
+          return el;
+        }
         el = el.parentElement;
       }
-      // Aggressive fallback: 8 levels up
+
+      // 3. Backup fallback: 6 levels up
       el = btn;
-      for (let i = 0; i < 8; i++) el = el?.parentElement;
+      for (let i = 0; i < 6 && el; i++) el = el.parentElement;
       return el;
     },
 
@@ -401,7 +409,50 @@
     },
 
     _price(row) {
-      const txt = row?.innerText || '';
+      if (!row) return { amount: 0, currency: 'unknown' };
+
+      // 1. Try to extract from the trade site's structured price element
+      const priceEl = row.querySelector('.price') || row.querySelector('[class*="price"]') || row.querySelector('[class*="Price"]');
+      if (priceEl) {
+        const sprite = priceEl.querySelector('.currency-sprite') || priceEl.querySelector('[class*="currency"]') || priceEl.querySelector('span[title],img[title]');
+        let currency = 'unknown';
+        if (sprite) {
+          const title = sprite.getAttribute('title')?.toLowerCase() || '';
+          if (title.includes('divine')) currency = 'divine';
+          else if (title.includes('chaos')) currency = 'chaos';
+          else if (title.includes('exalted')) currency = 'exalted';
+          else if (title.includes('mirror')) currency = 'mirror';
+          else if (title.includes('gold')) currency = 'gold';
+          else if (title.includes('vaal')) currency = 'vaal';
+          else if (title.includes('alch')) currency = 'alch';
+          else if (title.includes('fusing')) currency = 'fusing';
+          else if (title.includes('alteration') || title.includes('alt')) currency = 'alteration';
+
+          if (currency === 'unknown') {
+            for (const cls of sprite.classList) {
+              const c = cls.toLowerCase();
+              if (c.includes('divine')) { currency = 'divine'; break; }
+              if (c.includes('chaos')) { currency = 'chaos'; break; }
+              if (c.includes('exalted')) { currency = 'exalted'; break; }
+              if (c.includes('mirror')) { currency = 'mirror'; break; }
+              if (c.includes('gold')) { currency = 'gold'; break; }
+              if (c.includes('vaal')) { currency = 'vaal'; break; }
+              if (c.includes('alch')) { currency = 'alch'; break; }
+              if (c.includes('fusing')) { currency = 'fusing'; break; }
+              if (c.includes('alt')) { currency = 'alteration'; break; }
+            }
+          }
+        }
+
+        const amountText = priceEl.textContent?.replace(/[~]/g, '').trim() || '';
+        const amountMatch = amountText.match(/(\d+(?:\.\d+)?)/);
+        if (amountMatch && currency !== 'unknown') {
+          return { amount: parseFloat(amountMatch[1]), currency };
+        }
+      }
+
+      // 2. Fallback: match text lines
+      const txt = row.innerText || '';
       const m = txt.match(/(\d+(?:[.,]\d+)?)\s*(divine|chaos|exalted|mirror|gold|vaal|alch|fusing|alt(?:eration)?)/i);
       if (m) return { amount: parseFloat(m[1].replace(',', '.')), currency: m[2].toLowerCase() };
       return { amount: 0, currency: 'unknown' };
@@ -971,7 +1022,11 @@
 
       // Attach card listeners
       list.querySelectorAll('.poe2ph-card').forEach(card => {
-        card.addEventListener('click', () => card.classList.toggle('poe2ph-card-expanded'));
+        const expandBtn = card.querySelector('.poe2ph-expand-btn');
+        expandBtn?.addEventListener('click', e => {
+          e.stopPropagation();
+          card.classList.toggle('poe2ph-card-expanded');
+        });
       });
       list.querySelectorAll('.poe2ph-delete-btn').forEach(btn => {
         btn.addEventListener('click', e => {
@@ -1048,56 +1103,65 @@
                 ${charText ? `<span class="poe2ph-char-badge" title="${t('charBar.charLabel')}: ${this._esc(char.name)}">${charText}</span>` : ''}
               </div>
             </div>
-            <button class="poe2ph-delete-btn" data-id="${p.id}" title="${t('history.delete')}">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                <path d="M18 6L6 18M6 6l12 12"/>
-              </svg>
-            </button>
+            <div class="poe2ph-card-actions">
+              <button class="poe2ph-expand-btn" title="Expand/Collapse">
+                <svg class="poe2ph-expand-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </button>
+              <button class="poe2ph-delete-btn" data-id="${p.id}" title="${t('history.delete')}">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
           </div>
 
-          <div class="poe2ph-card-details">
-            <div class="poe2ph-detail-row">
-              <span class="poe2ph-detail-label">${t('history.seller')}</span>
-              <span class="poe2ph-detail-value">${this._esc(p.seller)}</span>
-            </div>
-            <div class="poe2ph-detail-row">
-              <span class="poe2ph-detail-label">${t('history.league')}</span>
-              <span class="poe2ph-detail-value">${this._esc(p.league)}</span>
-            </div>
-            <div class="poe2ph-detail-row">
-              <span class="poe2ph-detail-label">${t('history.category')}</span>
-              <span class="poe2ph-detail-value">${icon} ${cname}</span>
-            </div>
+          <div class="poe2ph-card-details-wrapper">
+            <div class="poe2ph-card-details">
+              <div class="poe2ph-detail-row">
+                <span class="poe2ph-detail-label">${t('history.seller')}</span>
+                <span class="poe2ph-detail-value">${this._esc(p.seller)}</span>
+              </div>
+              <div class="poe2ph-detail-row">
+                <span class="poe2ph-detail-label">${t('history.league')}</span>
+                <span class="poe2ph-detail-value">${this._esc(p.league)}</span>
+              </div>
+              <div class="poe2ph-detail-row">
+                <span class="poe2ph-detail-label">${t('history.category')}</span>
+                <span class="poe2ph-detail-value">${icon} ${cname}</span>
+              </div>
 
-            <!-- Re-assign Character Dropdown -->
-            <div class="poe2ph-detail-row">
-              <span class="poe2ph-detail-label">${t('charBar.moveTo')}</span>
-              <select class="poe2ph-card-char-select" data-id="${p.id}">
-                <option value="none" ${!p.characterId || p.characterId === 'none' ? 'selected' : ''}>${t('charBar.none')}</option>
-                ${this.characters.map(c => `
-                  <option value="${c.id}" ${p.characterId === c.id ? 'selected' : ''}>
-                    ${CLASS_INFO[c.class]?.emoji || '👤'} ${c.name}
-                  </option>
-                `).join('')}
-              </select>
-            </div>
+              <!-- Re-assign Character Dropdown -->
+              <div class="poe2ph-detail-row">
+                <span class="poe2ph-detail-label">${t('charBar.moveTo')}</span>
+                <select class="poe2ph-card-char-select" data-id="${p.id}">
+                  <option value="none" ${!p.characterId || p.characterId === 'none' ? 'selected' : ''}>${t('charBar.none')}</option>
+                  ${this.characters.map(c => `
+                    <option value="${c.id}" ${p.characterId === c.id ? 'selected' : ''}>
+                      ${CLASS_INFO[c.class]?.emoji || '👤'} ${c.name}
+                    </option>
+                  `).join('')}
+                </select>
+              </div>
 
-            ${p.stats?.rawText ? `
-            <div class="poe2ph-detail-row">
-              <span class="poe2ph-detail-label">Stats</span>
-              <span class="poe2ph-detail-value poe2ph-stats-text">${this._esc(p.stats.rawText.slice(0,250))}</span>
-            </div>` : ''}
-            ${p.searchUrl ? `
-            <div class="poe2ph-detail-row">
-              <span class="poe2ph-detail-label">${t('history.searchUrl')}</span>
-              <button class="poe2ph-open-search poe2ph-link-btn" data-url="${this._esc(p.searchUrl)}">
-                🔗 ${t('history.openSearch')}
-              </button>
-            </div>` : ''}
-            <textarea class="poe2ph-note-input"
-                      data-id="${p.id}"
-                      placeholder="${t('history.notes')}"
-                      rows="2">${this._esc(p.notes || '')}</textarea>
+              ${p.stats?.rawText ? `
+              <div class="poe2ph-detail-row">
+                <span class="poe2ph-detail-label">Stats</span>
+                <span class="poe2ph-detail-value poe2ph-stats-text">${this._esc(p.stats.rawText.slice(0,250))}</span>
+              </div>` : ''}
+              ${p.searchUrl ? `
+              <div class="poe2ph-detail-row">
+                <span class="poe2ph-detail-label">${t('history.searchUrl')}</span>
+                <button class="poe2ph-open-search poe2ph-link-btn" data-url="${this._esc(p.searchUrl)}">
+                  🔗 ${t('history.openSearch')}
+                </button>
+              </div>` : ''}
+              <textarea class="poe2ph-note-input"
+                        data-id="${p.id}"
+                        placeholder="${t('history.notes')}"
+                        rows="2">${this._esc(p.notes || '')}</textarea>
+            </div>
           </div>
         </div>`;
     }
@@ -1127,7 +1191,11 @@
 
       // Attach card listeners
       list.querySelectorAll('.poe2ph-card').forEach(card => {
-        card.addEventListener('click', () => card.classList.toggle('poe2ph-card-expanded'));
+        const expandBtn = card.querySelector('.poe2ph-expand-btn');
+        expandBtn?.addEventListener('click', e => {
+          e.stopPropagation();
+          card.classList.toggle('poe2ph-card-expanded');
+        });
       });
       list.querySelectorAll('.poe2ph-restore-btn').forEach(btn => {
         btn.addEventListener('click', e => {
@@ -1179,51 +1247,60 @@
                 ${charText ? `<span class="poe2ph-char-badge" title="${t('charBar.charLabel')}: ${this._esc(char.name)}">${charText}</span>` : ''}
               </div>
             </div>
-            <div class="poe2ph-trash-actions">
-              <button class="poe2ph-restore-btn" data-id="${p.id}" title="${t('history.restore')}">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                  <path d="M3 3v5h5"/>
+            <div class="poe2ph-card-actions">
+              <button class="poe2ph-expand-btn" title="Expand/Collapse">
+                <svg class="poe2ph-expand-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 9l6 6 6-6"/>
                 </svg>
               </button>
-              <button class="poe2ph-delete-perm-btn" data-id="${p.id}" title="${t('history.deletePermanent')}">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                  <path d="M18 6L6 18M6 6l12 12"/>
-                </svg>
-              </button>
+              <div class="poe2ph-trash-actions">
+                <button class="poe2ph-restore-btn" data-id="${p.id}" title="${t('history.restore')}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                    <path d="M3 3v5h5"/>
+                  </svg>
+                </button>
+                <button class="poe2ph-delete-perm-btn" data-id="${p.id}" title="${t('history.deletePermanent')}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
 
-          <div class="poe2ph-card-details">
-            <div class="poe2ph-detail-row">
-              <span class="poe2ph-detail-label">${t('history.seller')}</span>
-              <span class="poe2ph-detail-value">${this._esc(p.seller)}</span>
+          <div class="poe2ph-card-details-wrapper">
+            <div class="poe2ph-card-details">
+              <div class="poe2ph-detail-row">
+                <span class="poe2ph-detail-label">${t('history.seller')}</span>
+                <span class="poe2ph-detail-value">${this._esc(p.seller)}</span>
+              </div>
+              <div class="poe2ph-detail-row">
+                <span class="poe2ph-detail-label">${t('history.league')}</span>
+                <span class="poe2ph-detail-value">${this._esc(p.league)}</span>
+              </div>
+              <div class="poe2ph-detail-row">
+                <span class="poe2ph-detail-label">${t('history.category')}</span>
+                <span class="poe2ph-detail-value">${icon} ${cname}</span>
+              </div>
+              ${p.stats?.rawText ? `
+              <div class="poe2ph-detail-row">
+                <span class="poe2ph-detail-label">Stats</span>
+                <span class="poe2ph-detail-value poe2ph-stats-text">${this._esc(p.stats.rawText.slice(0,250))}</span>
+              </div>` : ''}
+              ${p.searchUrl ? `
+              <div class="poe2ph-detail-row">
+                <span class="poe2ph-detail-label">${t('history.searchUrl')}</span>
+                <button class="poe2ph-open-search poe2ph-link-btn" data-url="${this._esc(p.searchUrl)}">
+                  🔗 ${t('history.openSearch')}
+                </button>
+              </div>` : ''}
+              ${p.notes ? `
+              <div class="poe2ph-detail-row" style="margin-top: 4px;">
+                <span class="poe2ph-detail-label">Notes</span>
+                <span class="poe2ph-detail-value" style="font-style: italic;">${this._esc(p.notes)}</span>
+              </div>` : ''}
             </div>
-            <div class="poe2ph-detail-row">
-              <span class="poe2ph-detail-label">${t('history.league')}</span>
-              <span class="poe2ph-detail-value">${this._esc(p.league)}</span>
-            </div>
-            <div class="poe2ph-detail-row">
-              <span class="poe2ph-detail-label">${t('history.category')}</span>
-              <span class="poe2ph-detail-value">${icon} ${cname}</span>
-            </div>
-            ${p.stats?.rawText ? `
-            <div class="poe2ph-detail-row">
-              <span class="poe2ph-detail-label">Stats</span>
-              <span class="poe2ph-detail-value poe2ph-stats-text">${this._esc(p.stats.rawText.slice(0,250))}</span>
-            </div>` : ''}
-            ${p.searchUrl ? `
-            <div class="poe2ph-detail-row">
-              <span class="poe2ph-detail-label">${t('history.searchUrl')}</span>
-              <button class="poe2ph-open-search poe2ph-link-btn" data-url="${this._esc(p.searchUrl)}">
-                🔗 ${t('history.openSearch')}
-              </button>
-            </div>` : ''}
-            ${p.notes ? `
-            <div class="poe2ph-detail-row" style="margin-top: 4px;">
-              <span class="poe2ph-detail-label">Notes</span>
-              <span class="poe2ph-detail-value" style="font-style: italic;">${this._esc(p.notes)}</span>
-            </div>` : ''}
           </div>
         </div>`;
     }

@@ -712,18 +712,68 @@
   color: var(--red);
 }
 
-/* ===== CARD DETAILS (expanded) ===== */
+/* ===== CARD ACTIONS & EXPAND BUTTON ===== */
+.poe2ph-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.poe2ph-expand-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.poe2ph-expand-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--gold-mid);
+}
+
+.poe2ph-expand-arrow {
+  transition: transform 0.25s var(--ease);
+}
+
+.poe2ph-card-expanded .poe2ph-expand-arrow {
+  transform: rotate(180deg);
+  color: var(--gold-light);
+}
+
+/* ===== CARD DETAILS (expanded with transition) ===== */
+.poe2ph-card-details-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s var(--ease);
+  overflow: hidden;
+}
+
+.poe2ph-card-expanded .poe2ph-card-details-wrapper {
+  grid-template-rows: 1fr;
+}
+
 .poe2ph-card-details {
-  display: none;
-  padding: 10px 12px 12px;
-  border-top: 1px solid var(--border-dim);
+  min-height: 0;
+  padding: 0 12px;
   background: var(--bg-card-exp);
+  display: flex;
   flex-direction: column;
   gap: 7px;
+  border-top: 1px solid transparent;
+  transition: padding 0.3s var(--ease), border-top-color 0.3s var(--ease);
 }
 
 .poe2ph-card-expanded .poe2ph-card-details {
-  display: flex;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--border-dim);
 }
 
 .poe2ph-detail-row {
