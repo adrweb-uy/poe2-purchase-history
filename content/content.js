@@ -379,6 +379,28 @@
       });
       document.body.appendChild(this.host);
 
+      // Inject a <style> tag into the host page for reliable smooth transitions.
+      // CSS class toggling on document.body is far more reliable than inline
+      // style manipulation — the browser can properly plan and execute the animation.
+      if (!document.getElementById('poe2ph-body-style')) {
+        const s = document.createElement('style');
+        s.id = 'poe2ph-body-style';
+        // Only the margin classes here — transition is set via inline style below
+        // (inline !important beats any author stylesheet, including the site's own)
+        s.textContent = [
+          'body.poe2ph-open-right { margin-right: 380px !important; }',
+          'body.poe2ph-open-left  { margin-left:  380px !important; }',
+        ].join('\n');
+        document.head.appendChild(s);
+      }
+      // Inline !important is the highest possible CSS priority — no site stylesheet
+      // or inline style can override it, guaranteeing the transition always fires.
+      document.body.style.setProperty(
+        'transition',
+        'margin-right 0.4s ease, margin-left 0.4s ease',
+        'important'
+      );
+
       this.shadow = this.host.attachShadow({ mode: 'open' });
 
       // Link our stylesheet into the shadow root
@@ -569,10 +591,11 @@
       toggle.classList.toggle('poe2ph-toggle-open', this.isOpen);
       this.root.classList.toggle('poe2ph-is-open', this.isOpen); // drives toggle fade + close-tab visibility
 
-      // Compress page content by pushing body margin (mirrors the panel width)
-      const marginSide = pos === 'left' ? 'marginLeft' : 'marginRight';
-      document.body.style.transition = 'margin 0.32s cubic-bezier(0.4, 0, 0.2, 1)';
-      document.body.style[marginSide] = this.isOpen ? '380px' : '';
+      // Toggle a CSS class on document.body — the injected stylesheet handles
+      // the margin value and transition. Class toggling is frame-safe and
+      // cannot be overridden by the site's own inline styles.
+      const bodyClass = pos === 'left' ? 'poe2ph-open-left' : 'poe2ph-open-right';
+      document.body.classList.toggle(bodyClass, this.isOpen);
 
       if (this.isOpen) {
         // arrow points "inward" when open
@@ -719,9 +742,8 @@
     }
 
     async _setPosition(pos) {
-      // Clear margin from whichever side the panel was on
-      document.body.style.marginLeft  = '';
-      document.body.style.marginRight = '';
+      // Remove both side classes so the old margin animates back to 0
+      document.body.classList.remove('poe2ph-open-right', 'poe2ph-open-left');
 
       this.settings.panelPosition = pos;
       await Storage.saveSettings(this.settings);
