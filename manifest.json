@@ -48,8 +48,7 @@
         "icons/*.png"
       ],
       "matches": [
-        "*://www.pathofexile.com/trade2*",
-        "*://www.pathofexile.com/trade2/*"
+        "*://www.pathofexile.com/*"
       ]
     }
   ]
