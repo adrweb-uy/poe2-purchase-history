@@ -210,11 +210,36 @@
 
   const Storage = {
     async _get(key, def) {
-      return new Promise(resolve =>
-        chrome.storage.local.get(key, r => resolve(r[key] !== undefined ? r[key] : def)));
+      return new Promise(resolve => {
+        try {
+          chrome.storage.local.get(key, r => {
+            if (chrome.runtime.lastError) {
+              console.warn('[POE2PH] Storage get error:', chrome.runtime.lastError);
+              resolve(def);
+              return;
+            }
+            resolve(r && r[key] !== undefined ? r[key] : def);
+          });
+        } catch (e) {
+          console.warn('[POE2PH] Storage get exception:', e);
+          resolve(def);
+        }
+      });
     },
     async _set(key, val) {
-      return new Promise(resolve => chrome.storage.local.set({ [key]: val }, resolve));
+      return new Promise(resolve => {
+        try {
+          chrome.storage.local.set({ [key]: val }, () => {
+            if (chrome.runtime.lastError) {
+              console.warn('[POE2PH] Storage set error:', chrome.runtime.lastError);
+            }
+            resolve();
+          });
+        } catch (e) {
+          console.warn('[POE2PH] Storage set exception:', e);
+          resolve();
+        }
+      });
     },
     async getPurchases()         { return this._get('poe2ph_purchases', []); },
     async setPurchases(list)     { return this._set('poe2ph_purchases', list); },
@@ -289,12 +314,29 @@
 
     _name(row) {
       if (!row) return 'Unknown Item';
-      // Try attribute-based selectors first
-      for (const sel of ['[class*="name"]','[class*="Name"]','[class*="title"]','h3','h4','b','strong']) {
+
+      // Specifically target POE trade site item name classes
+      const itemNameEl = row.querySelector('.itemName');
+      const typeLineEl = row.querySelector('.typeLine');
+
+      const itemName = itemNameEl?.textContent?.trim() || '';
+      const typeLine = typeLineEl?.textContent?.trim() || '';
+
+      if (itemName && typeLine) {
+        return `${itemName} ${typeLine}`;
+      } else if (itemName) {
+        return itemName;
+      } else if (typeLine) {
+        return typeLine;
+      }
+
+      // Fallback if not found
+      for (const sel of ['h3', 'h4', '[class*="itemName"]', '[class*="typeLine"]', '.title', 'b', 'strong']) {
         const el = row.querySelector(sel);
         const txt = el?.textContent?.trim();
         if (txt && txt.length > 2 && txt.length < 120) return txt;
       }
+
       const lines = (row.innerText || '').split('\n').map(s => s.trim()).filter(Boolean);
       return lines[0] || 'Unknown Item';
     },
@@ -335,7 +377,8 @@
 
     _image(row) {
       if (!row) return '';
-      const img = row.querySelector('img');
+      // Target specific class container first to avoid profile/currency images
+      const img = row.querySelector('.iconContainer img') || row.querySelector('img');
       return img?.src || '';
     },
 
@@ -869,10 +912,16 @@
       const char = this.characters.find(c => c.id === p.characterId);
       const charText = char ? `${CLASS_INFO[char.class]?.emoji || '👤'} ${char.name}` : '';
 
+      // Render item image if it exists, otherwise fallback to standard category emoji icon
+      let iconHTML = `<div class="poe2ph-card-icon">${icon}</div>`;
+      if (p.imageUrl) {
+        iconHTML = `<div class="poe2ph-card-img-container"><img class="poe2ph-card-img" src="${this._esc(p.imageUrl)}" alt=""></div>`;
+      }
+
       return `
         <div class="poe2ph-card" data-id="${p.id}">
           <div class="poe2ph-card-main">
-            <div class="poe2ph-card-icon">${icon}</div>
+            ${iconHTML}
             <div class="poe2ph-card-info">
               <div class="poe2ph-card-name" title="${this._esc(p.itemName)}">${this._esc(p.itemName)}</div>
               <div class="poe2ph-card-meta">

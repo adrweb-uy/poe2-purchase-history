@@ -607,11 +607,30 @@
 }
 
 .poe2ph-card-icon {
-  font-size: 20px;
+  font-size: 24px;
   flex-shrink: 0;
-  width: 30px;
+  width: 52px;
   text-align: center;
   line-height: 1;
+}
+
+.poe2ph-card-img-container {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-dim);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.poe2ph-card-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .poe2ph-card-info { flex: 1; min-width: 0; }
