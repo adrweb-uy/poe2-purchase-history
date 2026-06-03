@@ -37,10 +37,10 @@
   --toggle-w:        48px;
   --ease:            cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Layout */
-  pointer-events: auto;
-  display: flex;
-  align-items: stretch;
+  /* Layout — zero-width anchor; children are absolute */
+  position: relative;
+  pointer-events: none;
+  overflow: visible;
   height: 100vh;
   font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 14px;
@@ -49,11 +49,14 @@
 }
 
 /* ===== POSITIONING ===== */
-.poe2ph-right { flex-direction: row-reverse; }
-.poe2ph-left  { flex-direction: row; }
+/* Toggle and panel are absolutely positioned — no flex row needed */
 
 /* ===== TOGGLE BUTTON ===== */
 .poe2ph-toggle {
+  /* Floats outside the zero-width host, anchored to the screen edge */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -62,23 +65,24 @@
   width: var(--toggle-w);
   min-height: 80px;
   height: 80px;
-  align-self: center;
   background: linear-gradient(160deg, #221a0a 0%, #130f07 100%);
   border: 1px solid var(--border-accent);
   cursor: pointer;
   color: var(--gold-mid);
   transition: background 0.25s var(--ease), border-color 0.25s, box-shadow 0.25s;
-  flex-shrink: 0;
+  pointer-events: auto;
   padding: 8px 6px;
-  position: relative;
+  z-index: 1;
 }
 
-/* Side-specific rounded corners */
+/* Side-specific positioning and rounded corners */
 .poe2ph-right .poe2ph-toggle {
+  right: 0;              /* sticks to the right edge of the screen */
   border-radius: 10px 0 0 10px;
   border-right: none;
 }
 .poe2ph-left .poe2ph-toggle {
+  left: 0;               /* sticks to the left edge of the screen */
   border-radius: 0 10px 10px 0;
   border-left: none;
 }
@@ -112,6 +116,8 @@
 
 /* ===== PANEL ===== */
 .poe2ph-panel {
+  position: absolute;
+  top: 0;
   width: var(--panel-w);
   height: 100vh;
   background: var(--bg-primary);
@@ -119,17 +125,19 @@
   flex-direction: column;
   overflow: hidden;
   transition: transform 0.32s var(--ease);
-  position: relative;
+  pointer-events: auto;
 }
 
 .poe2ph-right .poe2ph-panel {
+  right: 0;              /* anchored to right edge of host (= right of screen) */
   border-left: 1px solid var(--border-accent);
-  transform: translateX(100%);
+  transform: translateX(100%);  /* hidden off-screen to the right */
   box-shadow: -6px 0 30px rgba(0,0,0,0.7), -1px 0 0 var(--border-dim);
 }
 .poe2ph-left .poe2ph-panel {
+  left: 0;               /* anchored to left edge of host (= left of screen) */
   border-right: 1px solid var(--border-accent);
-  transform: translateX(-100%);
+  transform: translateX(-100%); /* hidden off-screen to the left */
   box-shadow: 6px 0 30px rgba(0,0,0,0.7), 1px 0 0 var(--border-dim);
 }
 

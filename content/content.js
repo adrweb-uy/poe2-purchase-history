@@ -362,16 +362,20 @@
     // ----------------------------------------------------------
 
     _buildDOM() {
-      // Shadow host — fixed, zero-size wrapper
+      // Shadow host — zero-width fixed anchor at the screen edge.
+      // The toggle and panel are absolutely positioned inside, extending outward.
       this.host = document.createElement('div');
       this.host.id = 'poe2ph-root';
+      const pos = this.settings.panelPosition;
       Object.assign(this.host.style, {
         position: 'fixed',
         top: '0',
         height: '100vh',
+        width: '0',
+        overflow: 'visible',
         zIndex: '2147483647',
         pointerEvents: 'none',
-        [this.settings.panelPosition === 'left' ? 'left' : 'right']: '0',
+        [pos === 'left' ? 'left' : 'right']: '0',
       });
       document.body.appendChild(this.host);
 
@@ -559,6 +563,11 @@
       panel.classList.toggle('poe2ph-panel-open', this.isOpen);
       toggle.classList.toggle('poe2ph-toggle-open', this.isOpen);
 
+      // Compress page content by pushing body margin (mirrors the panel width)
+      const marginSide = pos === 'left' ? 'marginLeft' : 'marginRight';
+      document.body.style.transition = 'margin 0.32s cubic-bezier(0.4, 0, 0.2, 1)';
+      document.body.style[marginSide] = this.isOpen ? '380px' : '';
+
       if (this.isOpen) {
         // arrow points "inward" when open
         arrow.textContent = pos === 'left' ? '◀' : '▶';
@@ -704,6 +713,10 @@
     }
 
     async _setPosition(pos) {
+      // Clear margin from whichever side the panel was on
+      document.body.style.marginLeft  = '';
+      document.body.style.marginRight = '';
+
       this.settings.panelPosition = pos;
       await Storage.saveSettings(this.settings);
 
@@ -716,11 +729,12 @@
 
       // Rebuild panel HTML (arrows + active state update)
       const wasOpen = this.isOpen;
+      this.isOpen = false; // reset so _toggle can re-apply margin on the correct side
       this.root.innerHTML = this._containerHTML();
       this._attachListeners();
       this._renderHistory();
       if (wasOpen) {
-        this.shadow.getElementById('poe2ph-panel')?.classList.add('poe2ph-panel-open');
+        this._toggle();            // re-opens on the new side with correct margin
         this._switchTab(this.activeTab);
       }
     }
