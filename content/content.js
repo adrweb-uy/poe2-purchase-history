@@ -165,7 +165,7 @@
     },
     async getPurchases()         { return this._get('poe2ph_purchases', []); },
     async setPurchases(list)     { return this._set('poe2ph_purchases', list); },
-    async getSettings()          { return this._get('poe2ph_settings', { language: 'en', panelPosition: 'right' }); },
+    async getSettings()          { return this._get('poe2ph_settings', { language: 'en', panelPosition: 'right', sidebarOpen: false }); },
     async saveSettings(s)        { return this._set('poe2ph_settings', s); },
 
     async addPurchase(item) {
@@ -365,6 +365,11 @@
       this._attachListeners();
       this._renderHistory();
       this._setupMutationObserver();
+
+      // Restore open state without animation on page load
+      if (this.settings.sidebarOpen) {
+        this._toggle(false);
+      }
     }
 
     // ----------------------------------------------------------
@@ -605,22 +610,57 @@
     //  Toggle & Tab
     // ----------------------------------------------------------
 
-    _toggle() {
+    _toggle(animate = true) {
       this.isOpen = !this.isOpen;
+
+      // Persist the open state
+      this.settings.sidebarOpen = this.isOpen;
+      Storage.saveSettings(this.settings).catch(console.error);
+
       const panel  = this.shadow.getElementById('poe2ph-panel');
       const arrow  = this.shadow.getElementById('poe2ph-arrow');
       const toggle = this.shadow.getElementById('poe2ph-toggle');
       const pos    = this.settings.panelPosition;
 
-      panel.classList.toggle('poe2ph-panel-open', this.isOpen);
-      toggle.classList.toggle('poe2ph-toggle-open', this.isOpen);
-      this.root.classList.toggle('poe2ph-is-open', this.isOpen); // drives toggle fade + close-tab visibility
+      if (!animate) {
+        // Temporarily disable transition on body and panel
+        const originalPanelTransition = panel.style.transition;
+        panel.style.transition = 'none';
 
-      // Toggle a CSS class on document.body — the injected stylesheet handles
-      // the margin value and transition. Class toggling is frame-safe and
-      // cannot be overridden by the site's own inline styles.
-      const bodyClass = pos === 'left' ? 'poe2ph-open-left' : 'poe2ph-open-right';
-      document.body.classList.toggle(bodyClass, this.isOpen);
+        const originalBodyTransition = document.body.style.getPropertyValue('transition');
+        const originalBodyTransitionPriority = document.body.style.getPropertyPriority('transition');
+        document.body.style.setProperty('transition', 'none', 'important');
+
+        // Force reflow
+        panel.offsetHeight;
+
+        panel.classList.toggle('poe2ph-panel-open', this.isOpen);
+        toggle.classList.toggle('poe2ph-toggle-open', this.isOpen);
+        this.root.classList.toggle('poe2ph-is-open', this.isOpen);
+
+        const bodyClass = pos === 'left' ? 'poe2ph-open-left' : 'poe2ph-open-right';
+        document.body.classList.toggle(bodyClass, this.isOpen);
+
+        // Force reflow
+        panel.offsetHeight;
+
+        // Restore transitions
+        requestAnimationFrame(() => {
+          panel.style.transition = originalPanelTransition;
+          if (originalBodyTransition) {
+            document.body.style.setProperty('transition', originalBodyTransition, originalBodyTransitionPriority);
+          } else {
+            document.body.style.removeProperty('transition');
+          }
+        });
+      } else {
+        panel.classList.toggle('poe2ph-panel-open', this.isOpen);
+        toggle.classList.toggle('poe2ph-toggle-open', this.isOpen);
+        this.root.classList.toggle('poe2ph-is-open', this.isOpen);
+
+        const bodyClass = pos === 'left' ? 'poe2ph-open-left' : 'poe2ph-open-right';
+        document.body.classList.toggle(bodyClass, this.isOpen);
+      }
 
       if (this.isOpen) {
         // arrow points "inward" when open
