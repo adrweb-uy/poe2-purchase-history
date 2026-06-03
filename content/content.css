@@ -34,7 +34,7 @@
   --green:           #27ae60;
   --scrollbar:       #2e2618;
   --panel-w:         380px;
-  --toggle-w:        48px;
+  --toggle-w:        44px;
   --ease:            cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Layout — zero-width anchor; children are absolute */
@@ -65,7 +65,7 @@
   width: var(--toggle-w);
   min-height: 66px;
   height: 66px;
-  background: linear-gradient(160deg, #221a0a 0%, #130f07 100%);
+  background: #000000;
   border: 1px solid var(--border-accent);
   cursor: pointer;
   color: var(--gold-mid);
@@ -78,17 +78,17 @@
 /* Side-specific positioning and rounded corners */
 .poe2ph-right .poe2ph-toggle {
   right: 0;              /* sticks to the right edge of the screen */
-  border-radius: 10px 0 0 10px;
+  border-radius: 6px 0 0 6px;
   border-right: none;
 }
 .poe2ph-left .poe2ph-toggle {
   left: 0;               /* sticks to the left edge of the screen */
-  border-radius: 0 10px 10px 0;
+  border-radius: 0 6px 6px 0;
   border-left: none;
 }
 
 .poe2ph-toggle:hover {
-  background: linear-gradient(160deg, #2e2410 0%, #1e1609 100%);
+  background: #111111;
   border-color: var(--gold-mid);
   box-shadow: 0 0 18px rgba(200,164,85,0.22);
   color: var(--gold-light);
@@ -687,6 +687,64 @@
 .poe2ph-btn-danger:hover {
   background: rgba(192,57,43,0.18);
   border-color: var(--red);
+}
+
+/* ===== BANNER AREA ===== */
+.poe2ph-banner {
+  background: #13100b;
+  border-bottom: 1px solid var(--border-mid);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  overflow: hidden;
+  max-height: 80px;
+}
+
+.poe2ph-banner-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.poe2ph-banner-label {
+  font-family: "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--gold-mid);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.poe2ph-banner-text {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.poe2ph-banner-close {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  padding: 0;
+}
+
+.poe2ph-banner-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--text-secondary);
 }
 
 /* ===== TOAST ===== */

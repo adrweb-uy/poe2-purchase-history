@@ -15,6 +15,8 @@
   //  CONSTANTS
   // ============================================================
 
+  const CURRENT_VERSION = '0.1.0';
+
   /** "Travel to Hideout" button text in all supported languages */
   const TRAVEL_TEXTS = new Set([
     'Travel to Hideout',       // EN
@@ -47,6 +49,10 @@
     en: {
       appName:    'POE2 Purchase History',
       appSubtitle: 'Trade Companion',
+      banner: {
+        title:      'NEW VERSION',
+        text:       'POE2 Purchase History has been updated to version 0.1.0.',
+      },
       tabs: { history: 'History', settings: 'Settings' },
       history: {
         empty:     'No purchases recorded yet.',
@@ -85,6 +91,10 @@
     es: {
       appName:    'POE2 Historial de Compras',
       appSubtitle: 'Compañero de Trade',
+      banner: {
+        title:      'NUEVA VERSIÓN',
+        text:       'POE2 Historial de Compras se actualizó a la versión 0.1.0.',
+      },
       tabs: { history: 'Historial', settings: 'Ajustes' },
       history: {
         empty:     'Aún no hay compras registradas.',
@@ -423,6 +433,7 @@
     _containerHTML() {
       const pos = this.settings.panelPosition;
       const arrowClosed = pos === 'left' ? '▶' : '◀';
+      const showBanner = this.settings.dismissedVersion !== CURRENT_VERSION;
 
       return `
         <!-- ── TOGGLE BUTTON ── -->
@@ -448,6 +459,19 @@
                       title="Collapse panel">${pos === 'right' ? '▶' : '◀'}</button>
             </div>
             <div class="poe2ph-header-sep"></div>
+          </div>
+
+          <!-- Banner Area -->
+          <div class="poe2ph-banner${showBanner ? '' : ' poe2ph-hidden'}" id="poe2ph-banner">
+            <div class="poe2ph-banner-content">
+              <div class="poe2ph-banner-label">${t('banner.title')}</div>
+              <div class="poe2ph-banner-text">${t('banner.text')}</div>
+            </div>
+            <button class="poe2ph-banner-close" id="poe2ph-banner-close" title="Dismiss announcement">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
           </div>
 
           <!-- Tabs -->
@@ -552,6 +576,7 @@
 
       $('poe2ph-toggle').addEventListener('click', () => this._toggle());
       $('poe2ph-header-collapse').addEventListener('click', () => this._toggle());
+      $('poe2ph-banner-close')?.addEventListener('click', () => this._dismissBanner());
 
       this.shadow.querySelectorAll('.poe2ph-tab').forEach(btn =>
         btn.addEventListener('click', () => this._switchTab(btn.dataset.tab)));
@@ -860,6 +885,24 @@
       el.classList.add('poe2ph-toast-visible');
       clearTimeout(this._toastTimer);
       this._toastTimer = setTimeout(() => el.classList.remove('poe2ph-toast-visible'), ms);
+    }
+
+    async _dismissBanner() {
+      this.settings.dismissedVersion = CURRENT_VERSION;
+      await Storage.saveSettings(this.settings);
+
+      const banner = this.shadow.getElementById('poe2ph-banner');
+      if (banner) {
+        banner.style.transition = 'opacity 0.25s ease, max-height 0.25s ease, padding 0.25s ease, border 0.25s ease';
+        banner.style.opacity = '0';
+        banner.style.maxHeight = '0';
+        banner.style.paddingTop = '0';
+        banner.style.paddingBottom = '0';
+        banner.style.borderBottomWidth = '0';
+        setTimeout(() => {
+          banner.classList.add('poe2ph-hidden');
+        }, 250);
+      }
     }
 
     // ----------------------------------------------------------
