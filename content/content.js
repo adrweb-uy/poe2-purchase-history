@@ -405,7 +405,7 @@
       return `
         <!-- ── TOGGLE BUTTON ── -->
         <button class="poe2ph-toggle" id="poe2ph-toggle" title="${t('appName')}">
-          ${CHEST_SVG(26, 26)}
+          <img src="${chrome.runtime.getURL('icons/chest_48.png')}" width="30" height="30" alt="">
           <span class="poe2ph-toggle-arrow" id="poe2ph-arrow">${arrowClosed}</span>
         </button>
 
@@ -415,11 +415,15 @@
           <!-- Header -->
           <div class="poe2ph-header">
             <div class="poe2ph-header-inner">
-              <div class="poe2ph-header-chest">${CHEST_SVG(38, 38)}</div>
+              <img class="poe2ph-header-chest"
+                   src="${chrome.runtime.getURL('icons/chest_48.png')}"
+                   width="44" height="44" alt="">
               <div class="poe2ph-header-text">
                 <h1 class="poe2ph-title">${t('appName')}</h1>
                 <p class="poe2ph-subtitle">${t('appSubtitle')}</p>
               </div>
+              <button class="poe2ph-header-collapse" id="poe2ph-header-collapse"
+                      title="Collapse panel">${pos === 'right' ? '▶' : '◀'}</button>
             </div>
             <div class="poe2ph-header-sep"></div>
           </div>
@@ -525,6 +529,7 @@
       const $ = id => this.shadow.getElementById(id);
 
       $('poe2ph-toggle').addEventListener('click', () => this._toggle());
+      $('poe2ph-header-collapse').addEventListener('click', () => this._toggle());
 
       this.shadow.querySelectorAll('.poe2ph-tab').forEach(btn =>
         btn.addEventListener('click', () => this._switchTab(btn.dataset.tab)));
@@ -562,6 +567,7 @@
 
       panel.classList.toggle('poe2ph-panel-open', this.isOpen);
       toggle.classList.toggle('poe2ph-toggle-open', this.isOpen);
+      this.root.classList.toggle('poe2ph-is-open', this.isOpen); // drives toggle fade + close-tab visibility
 
       // Compress page content by pushing body margin (mirrors the panel width)
       const marginSide = pos === 'left' ? 'marginLeft' : 'marginRight';

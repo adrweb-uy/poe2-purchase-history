@@ -55,7 +55,7 @@
 .poe2ph-toggle {
   /* Floats outside the zero-width host, anchored to the screen edge */
   position: absolute;
-  top: 50%;
+  top: 60%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
@@ -63,8 +63,8 @@
   justify-content: center;
   gap: 6px;
   width: var(--toggle-w);
-  min-height: 80px;
-  height: 80px;
+  min-height: 66px;
+  height: 66px;
   background: linear-gradient(160deg, #221a0a 0%, #130f07 100%);
   border: 1px solid var(--border-accent);
   cursor: pointer;
@@ -97,6 +97,13 @@
 .poe2ph-toggle-open {
   border-color: var(--gold-mid) !important;
   box-shadow: 0 0 14px rgba(200,164,85,0.15) !important;
+}
+
+/* When panel is open: fade the floating toggle out */
+.poe2ph-is-open .poe2ph-toggle {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s var(--ease), background 0.25s var(--ease), border-color 0.25s, box-shadow 0.25s;
 }
 
 .poe2ph-toggle svg {
@@ -145,6 +152,46 @@
   transform: translateX(0) !important;
 }
 
+/* ===== CLOSE TAB ===== */
+/* Sticks out from the outer edge of the panel when it is open.
+   It is a child of .poe2ph-panel, so it slides in/out with it automatically. */
+.poe2ph-close-tab {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 56px;
+  background: linear-gradient(160deg, #221a0a 0%, #130f07 100%);
+  border: 1px solid var(--border-accent);
+  cursor: pointer;
+  color: var(--gold-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  transition: background 0.25s var(--ease), border-color 0.25s, box-shadow 0.25s, color 0.25s;
+  font-size: 9px;
+  z-index: 2;
+  padding: 0;
+}
+.poe2ph-right .poe2ph-close-tab {
+  left: -22px;
+  border-radius: 8px 0 0 8px;
+  border-right: none;
+}
+.poe2ph-left .poe2ph-close-tab {
+  right: -22px;
+  left: auto;
+  border-radius: 0 8px 8px 0;
+  border-left: none;
+}
+.poe2ph-close-tab:hover {
+  background: linear-gradient(160deg, #2e2410 0%, #1e1609 100%);
+  border-color: var(--gold-mid);
+  box-shadow: 0 0 12px rgba(200,164,85,0.22);
+  color: var(--gold-light);
+}
+
 /* Top gold accent line */
 .poe2ph-panel::before {
   content: '';
@@ -159,7 +206,7 @@
 .poe2ph-header {
   background: linear-gradient(180deg, #1a1408 0%, var(--bg-primary) 100%);
   border-bottom: 1px solid var(--border-mid);
-  padding: 14px 16px;
+  padding: 18px 20px;
   flex-shrink: 0;
   position: relative;
 }
@@ -173,6 +220,30 @@
 .poe2ph-header-chest {
   flex-shrink: 0;
   filter: drop-shadow(0 0 10px rgba(200,164,85,0.35));
+  border-radius: 6px;
+}
+
+/* Collapse button — right side of header */
+.poe2ph-header-collapse {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s var(--ease), border-color 0.2s, color 0.2s;
+}
+.poe2ph-header-collapse:hover {
+  background: rgba(200,164,85,0.10);
+  border-color: var(--border-accent);
+  color: var(--gold-mid);
 }
 
 .poe2ph-title {
