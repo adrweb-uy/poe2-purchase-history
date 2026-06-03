@@ -1242,3 +1242,12 @@
   background: var(--red-bg);
   color: var(--red);
 }
+
+.poe2ph-settings-footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 18px;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}

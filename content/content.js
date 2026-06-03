@@ -117,6 +117,7 @@
         clearHistoryDesc: 'Permanently delete all recorded purchases.',
         clearBtn:     'Clear All',
         clearConfirm: 'Are you sure? This cannot be undone.',
+        version:      'Version',
       },
       categories: {
         weapon: 'Weapon', armor: 'Armor', accessory: 'Accessory',
@@ -188,6 +189,7 @@
         clearHistoryDesc: 'Eliminá permanentemente todas las compras registradas.',
         clearBtn:     'Limpiar Todo',
         clearConfirm: '¿Estás seguro? Esta acción no se puede deshacer.',
+        version:      'Versión',
       },
       categories: {
         weapon: 'Arma', armor: 'Armadura', accessory: 'Accesorio',
@@ -259,6 +261,7 @@
         clearHistoryDesc: 'Excluir permanentemente todas as compras registradas.',
         clearBtn:     'Limpar Tudo',
         clearConfirm: 'Tem certeza? Esta ação não pode ser desfeita.',
+        version:      'Versão',
       },
       categories: {
         weapon: 'Arma', armor: 'Armadura', accessory: 'Acessório',
@@ -330,6 +333,7 @@
         clearHistoryDesc: 'Lösche alle aufgezeichneten Käufe endgültig.',
         clearBtn:     'Alles löschen',
         clearConfirm: 'Bist du sicher? Dies kann nicht rückgängig gemacht werden.',
+        version:      'Version',
       },
       categories: {
         weapon: 'Waffe', armor: 'Rüstung', accessory: 'Schmuck',
@@ -401,6 +405,7 @@
         clearHistoryDesc: 'Supprimer définitivement tous les achats enregistrés.',
         clearBtn:     'Tout effacer',
         clearConfirm: 'Êtes-vous sûr ? Cette action est irréversible.',
+        version:      'Version',
       },
       categories: {
         weapon: 'Arme', armor: 'Armure', accessory: 'Accessoire',
@@ -472,6 +477,7 @@
         clearHistoryDesc: 'Навсегда удалить все записанные покупки.',
         clearBtn:     'Очистить всё',
         clearConfirm: 'Вы уверены? Это действие невозможно отменить.',
+        version:      'Версия',
       },
       categories: {
         weapon: 'Оружие', armor: 'Доспехи', accessory: 'Аксессуары',
@@ -543,6 +549,7 @@
         clearHistoryDesc: '記録されたすべての購入履歴を完全に削除します。',
         clearBtn:     'すべて消去',
         clearConfirm: '本当によろしいですか？この操作は取り消せません。',
+        version:      'バージョン',
       },
       categories: {
         weapon: '武器', armor: '防具', accessory: '装飾品',
@@ -614,6 +621,7 @@
         clearHistoryDesc: '기록된 모든 구매 내역을 영구히 삭제합니다.',
         clearBtn:     '모두 삭제',
         clearConfirm: '정말이십니까? 이 작업은 취소할 수 없습니다.',
+        version:      '버전',
       },
       categories: {
         weapon: '무기', armor: '방어구', accessory: '장신구',
@@ -1312,6 +1320,10 @@
             <h3 class="poe2ph-setting-title poe2ph-danger-title">${t('settings.clearHistory')}</h3>
             <p class="poe2ph-setting-desc">${t('settings.clearHistoryDesc')}</p>
             <button class="poe2ph-btn poe2ph-btn-danger" id="poe2ph-clear-btn">${t('settings.clearBtn')}</button>
+          </div>
+
+          <div class="poe2ph-settings-footer">
+            ${t('settings.version')} ${chrome.runtime.getManifest().version}
           </div>
 
         </div>
