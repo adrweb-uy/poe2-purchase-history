@@ -203,12 +203,432 @@
         exported:  'Historial exportado.',
       },
     },
-    pt: { /* Portuguese stub – falls back to EN */ },
-    de: { /* German stub */ },
-    fr: { /* French stub */ },
-    ru: { /* Russian stub */ },
-    ja: { /* Japanese stub */ },
-    ko: { /* Korean stub */ },
+    pt: {
+      appName:    'POE2 Histórico de Compras',
+      appSubtitle: 'Companheiro de Trade',
+      banner: {
+        title:      'NOVA VERSÃO',
+        text:       'O POE2 Histórico de Compras foi atualizado para a versão 0.1.0.',
+      },
+      tabs: { history: 'Histórico', trash: 'Lixeira', settings: 'Opções' },
+      charBar: {
+        label: 'Personagem:',
+        all: 'Todos os Personagens',
+        none: 'Sem Personagem',
+        newBtn: 'Novo',
+        placeholder: 'Nome do personagem...',
+        createBtn: 'Criar',
+        cancelBtn: 'Cancelar',
+        selectClass: 'Classe',
+        charLabel: 'Personagem',
+        moveTo: 'Mover para:',
+        titleNew: 'Criar Novo Personagem',
+      },
+      classes: {
+        witch: 'Bruxa', ranger: 'Arqueira', mercenary: 'Mercenário',
+        warrior: 'Guerreiro', monk: 'Monge', sorceress: 'Feiticeira',
+        druid: 'Druida', huntress: 'Caçadora', shadow: 'Assassino',
+        templar: 'Templário', marauder: 'Bárbaro', duelist: 'Duelista',
+      },
+      history: {
+        empty:     'Nenhuma compra registrada ainda.',
+        emptyHint: "Clique em 'Viajar para o Esconderijo' em qualquer resultado de trade para registrar uma compra automaticamente.",
+        seller:    'Vendedor', price: 'Preço', league: 'Liga',
+        notes:     'Adicionar nota…', delete: 'Excluir',
+        category:  'Categoria', searchUrl: 'URL de busca',
+        openSearch: 'Abrir busca',
+        restore:   'Restaurar',
+        deletePermanent: 'Excluir permanentemente',
+      },
+      trash: {
+        emptyBtn: 'Esvaziar Lixeira',
+        emptyConfirm: 'Tem certeza de que deseja esvaziar a lixeira permanentemente?',
+        empty: 'A lixeira está vazia.',
+        emptyHint: 'As compras excluídas aparecerão aqui.',
+      },
+      settings: {
+        language:          'Idioma',
+        languageDesc:      'Escolha o idioma da interface da extensão.',
+        panelPosition:     'Posição do Painel',
+        panelPositionDesc: 'Escolha em qual lado da tela o painel deve aparecer.',
+        left: 'Esquerda', right: 'Direita', reset: 'Redefinir',
+        export:     'Exportar Histórico',
+        exportDesc: 'Exportar seu histórico de compras como um arquivo JSON.',
+        exportBtn:  'Exportar JSON',
+        clearHistory: 'Limpar Histórico',
+        clearHistoryDesc: 'Excluir permanentemente todas as compras registradas.',
+        clearBtn:     'Limpar Tudo',
+        clearConfirm: 'Tem certeza? Esta ação não pode ser desfeita.',
+      },
+      categories: {
+        weapon: 'Arma', armor: 'Armadura', accessory: 'Acessório',
+        jewel: 'Joia', gem: 'Gema', currency: 'Moeda',
+        flask: 'Frasco', map: 'Mapa', other: 'Outro',
+      },
+      toast: {
+        purchased: '✅ Compra registrada!',
+        deleted:   'Enviado para a lixeira.',
+        restored:  'Compra restaurada.',
+        trashCleared: 'Lixeira esvaziada.',
+        cleared:   'Histórico limpo.',
+        exported:  'Histórico exportado.',
+      },
+    },
+    de: {
+      appName:    'POE2 Kaufhistorie',
+      appSubtitle: 'Handelsbegleiter',
+      banner: {
+        title:      'NEUE VERSION',
+        text:       'POE2 Kaufhistorie wurde auf Version 0.1.0 aktualisiert.',
+      },
+      tabs: { history: 'Verlauf', trash: 'Papierkorb', settings: 'Einstellungen' },
+      charBar: {
+        label: 'Charakter:',
+        all: 'Alle Charaktere',
+        none: 'Kein Charakter',
+        newBtn: 'Neu',
+        placeholder: 'Charaktername...',
+        createBtn: 'Erstellen',
+        cancelBtn: 'Abbrechen',
+        selectClass: 'Klasse wählen',
+        charLabel: 'Charakter',
+        moveTo: 'Verschieben nach:',
+        titleNew: 'Neuen Charakter erstellen',
+      },
+      classes: {
+        witch: 'Hexe', ranger: 'Waldläuferin', mercenary: 'Söldner',
+        warrior: 'Krieger', monk: 'Mönch', sorceress: 'Magierin',
+        druid: 'Druide', huntress: 'Jägerin', shadow: 'Schatten',
+        templar: 'Templer', marauder: 'Marodeur', duelist: 'Duellant',
+      },
+      history: {
+        empty:     'Noch keine Käufe aufgezeichnet.',
+        emptyHint: "Klicke bei einem Handelsergebnis auf 'Zum Versteck reisen', um einen Kauf automatisch aufzuzeichnen.",
+        seller:    'Verkäufer', price: 'Preis', league: 'Liga',
+        notes:     'Notiz hinzufügen…', delete: 'Löschen',
+        category:  'Kategorie', searchUrl: 'Such-URL',
+        openSearch: 'Suche öffnen',
+        restore:   'Wiederherstellen',
+        deletePermanent: 'Endgültig löschen',
+      },
+      trash: {
+        emptyBtn: 'Papierkorb leeren',
+        emptyConfirm: 'Möchtest du den Papierkorb wirklich endgültig leeren?',
+        empty: 'Papierkorb ist leer.',
+        emptyHint: 'Gelöschte Käufe werden hier angezeigt.',
+      },
+      settings: {
+        language:          'Sprache',
+        languageDesc:      'Wähle die Sprache für die Erweiterungsoberfläche.',
+        panelPosition:     'Panel-Position',
+        panelPositionDesc: 'Wähle, auf welcher Seite des Bildschirms das Panel angezeigt wird.',
+        left: 'Links', right: 'Rechts', reset: 'Zurücksetzen',
+        export:     'Verlauf exportieren',
+        exportDesc: 'Exportiere deinen Kaufverlauf als JSON-Datei.',
+        exportBtn:  'JSON exportieren',
+        clearHistory: 'Verlauf löschen',
+        clearHistoryDesc: 'Lösche alle aufgezeichneten Käufe endgültig.',
+        clearBtn:     'Alles löschen',
+        clearConfirm: 'Bist du sicher? Dies kann nicht rückgängig gemacht werden.',
+      },
+      categories: {
+        weapon: 'Waffe', armor: 'Rüstung', accessory: 'Schmuck',
+        jewel: 'Juwel', gem: 'Gemme', currency: 'Währung',
+        flask: 'Fläschchen', map: 'Karte', other: 'Anderes',
+      },
+      toast: {
+        purchased: '✅ Kauf aufgezeichnet!',
+        deleted:   'In den Papierkorb verschoben.',
+        restored:  'Kauf wiederhergestellt.',
+        trashCleared: 'Papierkorb geleert.',
+        cleared:   'Verlauf gelöscht.',
+        exported:  'Verlauf exportiert.',
+      },
+    },
+    fr: {
+      appName:    'POE2 Historique des Achats',
+      appSubtitle: 'Compagnon de Trade',
+      banner: {
+        title:      'NOUVELLE VERSION',
+        text:       'L’historique des achats POE2 a été mis à jour vers la version 0.1.0.',
+      },
+      tabs: { history: 'Historique', trash: 'Corbeille', settings: 'Paramètres' },
+      charBar: {
+        label: 'Personnage :',
+        all: 'Tous les Personnages',
+        none: 'Aucun Personnage',
+        newBtn: 'Nouveau',
+        placeholder: 'Nom du personnage...',
+        createBtn: 'Créer',
+        cancelBtn: 'Annuler',
+        selectClass: 'Sélectionner la classe',
+        charLabel: 'Personnage',
+        moveTo: 'Déplacer vers :',
+        titleNew: 'Créer un nouveau personnage',
+      },
+      classes: {
+        witch: 'Sorcière', ranger: 'Chasseresse', mercenary: 'Mercenaire',
+        warrior: 'Guerrier', monk: 'Moine', sorceress: 'Enchanteresse',
+        druid: 'Druide', huntress: 'Traqueuse', shadow: 'Ombre',
+        templar: 'Templier', marauder: 'Maraudeur', duelist: 'Duelliste',
+      },
+      history: {
+        empty:     'Aucun achat enregistré pour le moment.',
+        emptyHint: "Cliquez sur 'Voyager vers la Cachette' sur n'importe quel résultat pour enregistrer automatiquement un achat.",
+        seller:    'Vendeur', price: 'Prix', league: 'Ligue',
+        notes:     'Ajouter une note…', delete: 'Supprimer',
+        category:  'Catégorie', searchUrl: 'URL de recherche',
+        openSearch: 'Ouvrir la recherche',
+        restore:   'Restaurer',
+        deletePermanent: 'Supprimer définitivement',
+      },
+      trash: {
+        emptyBtn: 'Vider la corbeille',
+        emptyConfirm: 'Voulez-vous vraiment vider la corbeille définitivement ?',
+        empty: 'La corbeille est vide.',
+        emptyHint: 'Les achats supprimés apparaîtront ici.',
+      },
+      settings: {
+        language:          'Langue',
+        languageDesc:      'Choisissez la langue pour l’interface de l’extension.',
+        panelPosition:     'Position du panneau',
+        panelPositionDesc: 'Choisissez le côté de l’écran où le panneau s’affiche.',
+        left: 'Gauche', right: 'Droite', reset: 'Réinitialiser',
+        export:     'Exporter l’historique',
+        exportDesc: 'Exportez votre historique d’achats dans un fichier JSON.',
+        exportBtn:  'Exporter le JSON',
+        clearHistory: 'Effacer l’historique',
+        clearHistoryDesc: 'Supprimer définitivement tous les achats enregistrés.',
+        clearBtn:     'Tout effacer',
+        clearConfirm: 'Êtes-vous sûr ? Cette action est irréversible.',
+      },
+      categories: {
+        weapon: 'Arme', armor: 'Armure', accessory: 'Accessoire',
+        jewel: 'Joyau', gem: 'Gemme', currency: 'Monnaie',
+        flask: 'Flacon', map: 'Carte', other: 'Autre',
+      },
+      toast: {
+        purchased: '✅ Achat enregistré !',
+        deleted:   'Déplacé dans la corbeille.',
+        restored:  'Achat restauré.',
+        trashCleared: 'Corbeille vidée.',
+        cleared:   'Historique effacé.',
+        exported:  'Historique exporté.',
+      },
+    },
+    ru: {
+      appName:    'POE2 История покупок',
+      appSubtitle: 'Торговый компаньон',
+      banner: {
+        title:      'НОВАЯ ВЕРСИЯ',
+        text:       'История покупок POE2 обновлена до версии 0.1.0.',
+      },
+      tabs: { history: 'История', trash: 'Удаленные', settings: 'Настройки' },
+      charBar: {
+        label: 'Персонаж:',
+        all: 'Все персонажи',
+        none: 'Без персонажа',
+        newBtn: 'Новый',
+        placeholder: 'Имя персонажа...',
+        createBtn: 'Создать',
+        cancelBtn: 'Отмена',
+        selectClass: 'Выберите класс',
+        charLabel: 'Персонаж',
+        moveTo: 'Переместить в:',
+        titleNew: 'Создать нового персонажа',
+      },
+      classes: {
+        witch: 'Ведьма', ranger: 'Охотница', mercenary: 'Наемник',
+        warrior: 'Воин', monk: 'Монах', sorceress: 'Заклинательница',
+        druid: 'Друид', huntress: 'Следопыт', shadow: 'Бандит',
+        templar: 'Жрец', marauder: 'Дикарь', duelist: 'Дуэлянт',
+      },
+      history: {
+        empty:     'Покупки еще не записаны.',
+        emptyHint: "Нажмите 'Перейти в убежище' на любом объявлении, чтобы записать покупку автоматически.",
+        seller:    'Продавец', price: 'Цена', league: 'Лига',
+        notes:     'Добавить заметку…', delete: 'Удалить',
+        category:  'Категория', searchUrl: 'Ссылка поиска',
+        openSearch: 'Открыть поиск',
+        restore:   'Восстановить',
+        deletePermanent: 'Удалить навсегда',
+      },
+      trash: {
+        emptyBtn: 'Очистить корзину',
+        emptyConfirm: 'Вы уверены, что хотите навсегда очистить корзину?',
+        empty: 'Корзина пуста.',
+        emptyHint: 'Удаленные покупки появятся здесь.',
+      },
+      settings: {
+        language:          'Язык',
+        languageDesc:      'Выберите язык интерфейса расширения.',
+        panelPosition:     'Положение панели',
+        panelPositionDesc: 'Выберите, с какой стороны экрана отображать панель.',
+        left: 'Слева', right: 'Справа', reset: 'Сбросить',
+        export:     'Экспорт истории',
+        exportDesc: 'Экспортируйте историю покупок в виде файла JSON.',
+        exportBtn:  'Экспорт JSON',
+        clearHistory: 'Очистить историю',
+        clearHistoryDesc: 'Навсегда удалить все записанные покупки.',
+        clearBtn:     'Очистить всё',
+        clearConfirm: 'Вы уверены? Это действие невозможно отменить.',
+      },
+      categories: {
+        weapon: 'Оружие', armor: 'Доспехи', accessory: 'Аксессуары',
+        jewel: 'Самоцветы', gem: 'Камни умений', currency: 'Валюта',
+        flask: 'Флаконы', map: 'Карты', other: 'Другое',
+      },
+      toast: {
+        purchased: '✅ Покупка записана!',
+        deleted:   'Перемещено в корзину.',
+        restored:  'Покупка восстановлена.',
+        trashCleared: 'Корзина очищена.',
+        cleared:   'История очищена.',
+        exported:  'История экспортирована.',
+      },
+    },
+    ja: {
+      appName:    'POE2 購入履歴',
+      appSubtitle: 'トレードコンパニオン',
+      banner: {
+        title:      '新バージョン',
+        text:       'POE2購入履歴がバージョン0.1.0にアップデートされました。',
+      },
+      tabs: { history: '履歴', trash: 'ゴミ箱', settings: '設定' },
+      charBar: {
+        label: 'キャラクター:',
+        all: 'すべてのキャラクター',
+        none: 'キャラクターなし',
+        newBtn: '新規',
+        placeholder: 'キャラクター名...',
+        createBtn: '作成',
+        cancelBtn: 'キャンセル',
+        selectClass: 'クラスを選択',
+        charLabel: 'キャラクター',
+        moveTo: '移動先:',
+        titleNew: '新しいキャラクターを作成',
+      },
+      classes: {
+        witch: 'ウィッチ', ranger: 'レンジャー', mercenary: 'マーセナリー',
+        warrior: 'ウォリアー', monk: 'モンク', sorceress: 'ソーサレス',
+        druid: 'ドルイド', huntress: 'ハントレス', shadow: 'シャドウ',
+        templar: 'テンプラー', marauder: 'マローダー', duelist: 'デュエリスト',
+      },
+      history: {
+        empty:     '購入履歴はまだありません。',
+        emptyHint: "トレード結果の「ハイドアウトへ移動」をクリックすると、自動的に購入が記録されます。",
+        seller:    '販売者', price: '価格', league: 'リーグ',
+        notes:     'メモを追加…', delete: '削除',
+        category:  'カテゴリー', searchUrl: '検索URL',
+        openSearch: '検索を開く',
+        restore:   '復元',
+        deletePermanent: '完全に削除',
+      },
+      trash: {
+        emptyBtn: 'ゴミ箱を空にする',
+        emptyConfirm: '本当にゴミ箱を完全に空にしますか？',
+        empty: 'ゴミ箱は空です。',
+        emptyHint: '削除された購入履歴がここに表示されます。',
+      },
+      settings: {
+        language:          '言語',
+        languageDesc:      '拡張機能インターフェースの言語を選択します。',
+        panelPosition:     'パネル位置',
+        panelPositionDesc: 'パネルを表示する画面の端を選択します。',
+        left: '左', right: '右', reset: 'リセット',
+        export:     '履歴の書き出し',
+        exportDesc: '購入履歴をJSONファイルとして書き出します。',
+        exportBtn:  'JSONを書き出す',
+        clearHistory: '履歴の消去',
+        clearHistoryDesc: '記録されたすべての購入履歴を完全に削除します。',
+        clearBtn:     'すべて消去',
+        clearConfirm: '本当によろしいですか？この操作は取り消せません。',
+      },
+      categories: {
+        weapon: '武器', armor: '防具', accessory: '装飾品',
+        jewel: 'ジュエル', gem: 'ジェム', currency: 'カレンシー',
+        flask: 'フラスコ', map: 'マップ', other: 'その他',
+      },
+      toast: {
+        purchased: '✅ 購入が記録されました！',
+        deleted:   'ゴミ箱に移動しました。',
+        restored:  '購入履歴を復元しました。',
+        trashCleared: 'ゴミ箱を空にしました。',
+        cleared:   '履歴を消去しました。',
+        exported:  '履歴を書き出しました。',
+      },
+    },
+    ko: {
+      appName:    'POE2 구매 내역',
+      appSubtitle: '거래 동반자',
+      banner: {
+        title:      '새 버전',
+        text:       'POE2 구매 내역이 0.1.0 버전으로 업데이트되었습니다.',
+      },
+      tabs: { history: '내역', trash: '휴지통', settings: '설정' },
+      charBar: {
+        label: '캐릭터:',
+        all: '모든 캐릭터',
+        none: '캐릭터 없음',
+        newBtn: '새 캐릭터',
+        placeholder: '캐릭터 이름...',
+        createBtn: '생성',
+        cancelBtn: '취소',
+        selectClass: '클래스 선택',
+        charLabel: '캐릭터',
+        moveTo: '이동 대상:',
+        titleNew: '새 캐릭터 생성',
+      },
+      classes: {
+        witch: '위치', ranger: '레인저', mercenary: '머서너리',
+        warrior: '워리어', monk: '몽크', sorceress: '소서리스',
+        druid: '드루이드', huntress: '헌트ريس', shadow: '섀도우',
+        templar: '템플러', marauder: '머로더', duelist: '듀얼리스트',
+      },
+      history: {
+        empty:     '기록된 구매 내역이 없습니다.',
+        emptyHint: "거래 결과의 '은신처로 이동' 버튼을 클릭하면 구매가 자동으로 기록됩니다.",
+        seller:    '판매자', price: '가격', league: '리그',
+        notes:     '메모 추가…', delete: '삭제',
+        category:  '카테고리', searchUrl: '검색 URL',
+        openSearch: '검색 열기',
+        restore:   '복구',
+        deletePermanent: '영구 삭제',
+      },
+      trash: {
+        emptyBtn: '휴지통 비우기',
+        emptyConfirm: '정말로 휴지통을 영구히 비우시겠습니까?',
+        empty: '휴지통이 비어 있습니다.',
+        emptyHint: '삭제된 구매 내역이 여기에 표시됩니다.',
+      },
+      settings: {
+        language:          '언어',
+        languageDesc:      '확장 프로그램 인터페이스의 언어를 선택합니다.',
+        panelPosition:     '패널 위치',
+        panelPositionDesc: '패널이 표시될 화면의 방향을 선택합니다.',
+        left: '왼쪽', right: '오른쪽', reset: '재설정',
+        export:     '내역 내보내기',
+        exportDesc: '구매 내역을 JSON 파일로 내보냅니다.',
+        exportBtn:  'JSON 내보내기',
+        clearHistory: '내역 삭제',
+        clearHistoryDesc: '기록된 모든 구매 내역을 영구히 삭제합니다.',
+        clearBtn:     '모두 삭제',
+        clearConfirm: '정말이십니까? 이 작업은 취소할 수 없습니다.',
+      },
+      categories: {
+        weapon: '무기', armor: '방어구', accessory: '장신구',
+        jewel: '주얼', gem: '젬', currency: '화폐',
+        flask: '플라스크', map: '지도', other: '기타',
+      },
+      toast: {
+        purchased: '✅ 구매가 기록되었습니다!',
+        deleted:   '휴지통으로 이동했습니다.',
+        restored:  '구매 내역이 복구되었습니다.',
+        trashCleared: '휴지통을 비웠습니다.',
+        cleared:   '내역이 삭제되었습니다.',
+        exported:  '내역을 내보냈습니다.',
+      },
+    },
   };
 
   // Current locale resolver
@@ -611,6 +1031,19 @@
       if (this.settings.sidebarOpen) {
         this._toggle(false);
       }
+
+      // Close language dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        const path = e.composedPath();
+        const dropdown = this.shadow.getElementById('poe2ph-lang-dropdown');
+        if (dropdown && dropdown.classList.contains('poe2ph-dropdown-open')) {
+          if (!path.includes(dropdown)) {
+            dropdown.classList.remove('poe2ph-dropdown-open');
+            const trigger = this.shadow.getElementById('poe2ph-lang-trigger');
+            if (trigger) trigger.setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
     }
 
     // ----------------------------------------------------------
@@ -816,32 +1249,43 @@
 
     _settingsHTML() {
       const langs = [
-        { code:'en', flag:'🇬🇧', name:'English'   },
-        { code:'es', flag:'🇪🇸', name:'Español'   },
-        { code:'pt', flag:'🇧🇷', name:'Português' },
-        { code:'de', flag:'🇩🇪', name:'Deutsch'   },
-        { code:'fr', flag:'🇫🇷', name:'Français'  },
-        { code:'ru', flag:'🇷🇺', name:'Русский'   },
-        { code:'ja', flag:'🇯🇵', name:'日本語'     },
-        { code:'ko', flag:'🇰🇷', name:'한국어'     },
+        { code:'en', flag:'🇬🇧', name:'English',   engName:'English' },
+        { code:'es', flag:'🇪🇸', name:'Español',   engName:'Spanish' },
+        { code:'pt', flag:'🇧🇷', name:'Português', engName:'Portuguese' },
+        { code:'de', flag:'🇩🇪', name:'Deutsch',   engName:'German' },
+        { code:'fr', flag:'🇫🇷', name:'Français',  engName:'French' },
+        { code:'ru', flag:'🇷🇺', name:'Русский',   engName:'Russian' },
+        { code:'ja', flag:'🇯🇵', name:'日本語',     engName:'Japanese' },
+        { code:'ko', flag:'🇰🇷', name:'한국어',     engName:'Korean' },
       ];
       const pos = this.settings.panelPosition;
+      const activeLang = langs.find(l => l.code === this.settings.language) || langs[0];
 
       return `
         <div class="poe2ph-settings-content">
-
+ 
           <!-- Language -->
           <div class="poe2ph-setting-card">
             <h3 class="poe2ph-setting-title">${t('settings.language')}</h3>
             <p class="poe2ph-setting-desc">${t('settings.languageDesc')}</p>
-            <div class="poe2ph-lang-grid">
-              ${langs.map(l => `
-                <button class="poe2ph-lang-btn${this.settings.language === l.code ? ' poe2ph-active' : ''}"
-                        data-lang="${l.code}" title="${l.name}">
-                  <span class="poe2ph-lang-flag">${l.flag}</span>
-                  <span class="poe2ph-lang-name">${l.name}</span>
-                </button>
-              `).join('')}
+            
+            <div class="poe2ph-dropdown poe2ph-lang-dropdown" id="poe2ph-lang-dropdown">
+              <button class="poe2ph-dropdown-trigger" id="poe2ph-lang-trigger" aria-haspopup="listbox" aria-expanded="false">
+                <span class="poe2ph-dropdown-trigger-flag">${activeLang.flag}</span>
+                <span class="poe2ph-dropdown-trigger-name">${activeLang.name.toUpperCase()}</span>
+                <svg class="poe2ph-dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </button>
+              <div class="poe2ph-dropdown-menu" id="poe2ph-lang-menu">
+                ${langs.map(l => `
+                  <div class="poe2ph-dropdown-item${this.settings.language === l.code ? ' poe2ph-active' : ''}" data-lang="${l.code}">
+                    <span class="poe2ph-dropdown-item-flag">${l.flag}</span>
+                    <span class="poe2ph-dropdown-item-name">${l.name.toUpperCase()}</span>
+                    <span class="poe2ph-dropdown-item-sub">${l.engName}</span>
+                  </div>
+                `).join('')}
+              </div>
             </div>
           </div>
 
@@ -896,16 +1340,31 @@
 
     _attachSettingsListeners() {
       const $ = id => this.shadow.getElementById(id);
-
-      // Language
-      this.shadow.querySelectorAll('.poe2ph-lang-btn').forEach(btn =>
-        btn.addEventListener('click', () => this._setLanguage(btn.dataset.lang)));
-
+ 
+      // Language Dropdown
+      const dropdown = $('poe2ph-lang-dropdown');
+      const trigger = $('poe2ph-lang-trigger');
+      if (trigger && dropdown) {
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const open = dropdown.classList.toggle('poe2ph-dropdown-open');
+          trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+      }
+ 
+      this.shadow.querySelectorAll('.poe2ph-dropdown-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const lang = item.dataset.lang;
+          this._setLanguage(lang);
+        });
+      });
+ 
       // Panel position
       this.shadow.querySelectorAll('.poe2ph-pos-btn[data-position]').forEach(btn =>
         btn.addEventListener('click', () => this._setPosition(btn.dataset.position)));
       $('poe2ph-reset-pos')?.addEventListener('click', () => this._setPosition('right'));
-
+ 
       // Export / Clear
       $('poe2ph-export-btn')?.addEventListener('click', () => this._exportHistory());
       $('poe2ph-clear-btn')?.addEventListener('click', () => this._clearHistory());

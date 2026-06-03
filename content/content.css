@@ -874,39 +874,146 @@
   line-height: 1.55;
 }
 
-/* Language grid */
-.poe2ph-lang-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
+/* Custom Dropdown Styles */
+.poe2ph-dropdown {
+  position: relative;
+  width: 100%;
 }
 
-.poe2ph-lang-btn {
+.poe2ph-dropdown-trigger {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
+  gap: 10px;
+  padding: 10px 14px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-dim);
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
-  color: var(--text-muted);
+  color: var(--text-primary);
   font-family: inherit;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  font-size: 13px;
+  font-weight: 600;
   text-align: left;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  user-select: none;
 }
-.poe2ph-lang-btn:hover {
+
+.poe2ph-dropdown-trigger:hover {
   border-color: var(--border-mid);
-  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.01);
 }
-.poe2ph-lang-btn.poe2ph-active {
-  border-color: var(--gold-dark);
-  background: rgba(200,164,85,0.07);
+
+.poe2ph-dropdown.poe2ph-dropdown-open .poe2ph-dropdown-trigger {
+  border-color: var(--gold-mid);
+  box-shadow: 0 0 8px rgba(200, 164, 85, 0.15);
+  background: var(--bg-secondary);
+}
+
+.poe2ph-dropdown-trigger-flag {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.poe2ph-dropdown-trigger-name {
+  flex: 1;
+  letter-spacing: 0.5px;
+}
+
+.poe2ph-dropdown-arrow {
+  color: var(--text-muted);
+  transition: transform 0.2s var(--ease), color 0.2s;
+}
+
+.poe2ph-dropdown.poe2ph-dropdown-open .poe2ph-dropdown-arrow {
+  transform: rotate(180deg);
   color: var(--gold-light);
 }
 
-.poe2ph-lang-flag { font-size: 17px; line-height: 1; }
-.poe2ph-lang-name { font-size: 11px; }
+.poe2ph-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-accent);
+  border-radius: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 200;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+}
+
+.poe2ph-dropdown.poe2ph-dropdown-open .poe2ph-dropdown-menu {
+  display: block;
+}
+
+/* Custom Scrollbar for Dropdown Menu */
+.poe2ph-dropdown-menu::-webkit-scrollbar {
+  width: 4px;
+}
+.poe2ph-dropdown-menu::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+.poe2ph-dropdown-menu::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 2px;
+}
+.poe2ph-dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: var(--border-mid);
+}
+
+.poe2ph-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-dim);
+}
+
+.poe2ph-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.poe2ph-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+}
+
+.poe2ph-dropdown-item.poe2ph-active {
+  color: var(--gold-light) !important;
+  background: rgba(200, 164, 85, 0.05);
+}
+
+.poe2ph-dropdown-item-flag {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.poe2ph-dropdown-item-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.poe2ph-dropdown-item-sub {
+  font-size: 10.5px;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.poe2ph-dropdown-item:hover .poe2ph-dropdown-item-sub {
+  color: var(--text-secondary);
+}
+
+.poe2ph-dropdown-item.poe2ph-active .poe2ph-dropdown-item-sub {
+  color: var(--gold-dark);
+}
 
 /* Position buttons */
 .poe2ph-position-btns {
