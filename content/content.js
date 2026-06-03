@@ -285,6 +285,7 @@
           searchUrl: window.location.href,
           stats:     this._stats(row),
           imageUrl:  this._image(row),
+          rarity:    this._rarity(row),
           notes:     '',
         };
       } catch (e) {
@@ -315,30 +316,53 @@
     _name(row) {
       if (!row) return 'Unknown Item';
 
-      // Specifically target POE trade site item name classes
-      const itemNameEl = row.querySelector('.itemName');
-      const typeLineEl = row.querySelector('.typeLine');
+      // 1. Try to find the item header container
+      const header = row.querySelector('.itemHeader') || row.querySelector('.item-header') || row.querySelector('[class*="Header"]');
+      if (header) {
+        const nameEl = header.querySelector('.itemName') || header.querySelector('.item-name') || header.querySelector('[class*="Name"]');
+        const typeEl = header.querySelector('.typeLine') || header.querySelector('.type-line') || header.querySelector('[class*="Type"]');
 
+        const nameText = nameEl?.textContent?.trim() || '';
+        const typeText = typeEl?.textContent?.trim() || '';
+
+        // Exclude status words if mistakenly captured
+        if (nameText && nameText.toLowerCase() !== 'verified' && nameText.toLowerCase() !== 'online') {
+          if (typeText) return `${nameText} ${typeText}`;
+          return nameText;
+        }
+
+        // Fallback: parse lines of header text
+        const lines = header.innerText.split('\n').map(s => s.trim()).filter(Boolean);
+        const filteredLines = lines.filter(l => {
+          const lLower = l.toLowerCase();
+          return lLower !== 'verified' && lLower !== 'online' && lLower !== 'offline';
+        });
+        if (filteredLines.length > 0) {
+          return filteredLines.join(' ');
+        }
+      }
+
+      // 2. Direct elements fallback
+      const itemNameEl = row.querySelector('.itemName') || row.querySelector('.item-name') || row.querySelector('[class*="itemName"]');
+      const typeLineEl = row.querySelector('.typeLine') || row.querySelector('.type-line') || row.querySelector('[class*="typeLine"]');
       const itemName = itemNameEl?.textContent?.trim() || '';
       const typeLine = typeLineEl?.textContent?.trim() || '';
 
-      if (itemName && typeLine) {
+      if (itemName && itemName.toLowerCase() !== 'verified' && typeLine) {
         return `${itemName} ${typeLine}`;
-      } else if (itemName) {
+      } else if (itemName && itemName.toLowerCase() !== 'verified') {
         return itemName;
       } else if (typeLine) {
         return typeLine;
       }
 
-      // Fallback if not found
-      for (const sel of ['h3', 'h4', '[class*="itemName"]', '[class*="typeLine"]', '.title', 'b', 'strong']) {
-        const el = row.querySelector(sel);
-        const txt = el?.textContent?.trim();
-        if (txt && txt.length > 2 && txt.length < 120) return txt;
-      }
-
+      // 3. Fallback to row text lines (ignoring status words, account names, and prices)
       const lines = (row.innerText || '').split('\n').map(s => s.trim()).filter(Boolean);
-      return lines[0] || 'Unknown Item';
+      const filtered = lines.filter(l => {
+        const lLower = l.toLowerCase();
+        return lLower !== 'verified' && lLower !== 'online' && lLower !== 'offline' && !lLower.startsWith('acc:') && !l.includes('Exalted') && !l.includes('Chaos') && !l.includes('Divine');
+      });
+      return filtered[0] || 'Unknown Item';
     },
 
     _price(row) {
@@ -395,6 +419,34 @@
       return 'other';
     },
 
+    _rarity(row) {
+      if (!row) return 'normal';
+
+      // Check classes on itemHeader, itemName, typeLine or any descendant of the row
+      const elements = row.querySelectorAll('.itemHeader, .itemName, .typeLine, .itemElement, [class*="unique"], [class*="rare"], [class*="magic"], [class*="gem"], [class*="currency"]');
+      for (const el of elements) {
+        for (const cls of el.classList) {
+          const c = cls.toLowerCase();
+          if (c === 'unique') return 'unique';
+          if (c === 'rare') return 'rare';
+          if (c === 'magic') return 'magic';
+          if (c === 'normal') return 'normal';
+          if (c === 'gem') return 'gem';
+          if (c === 'currency') return 'currency';
+        }
+      }
+
+      // Fallback: check text content
+      const txt = (row.innerText || '');
+      if (txt.includes('Rarity: Unique') || row.querySelector('.unique') || row.querySelector('[class*="unique"]') || row.querySelector('[class*="-unique"]')) return 'unique';
+      if (txt.includes('Rarity: Rare') || row.querySelector('.rare') || row.querySelector('[class*="rare"]') || row.querySelector('[class*="-rare"]')) return 'rare';
+      if (txt.includes('Rarity: Magic') || row.querySelector('.magic') || row.querySelector('[class*="magic"]') || row.querySelector('[class*="-magic"]')) return 'magic';
+      if (txt.includes('Rarity: Gem') || row.querySelector('.gem') || row.querySelector('[class*="gem"]') || row.querySelector('[class*="-gem"]')) return 'gem';
+      if (txt.includes('Rarity: Currency') || row.querySelector('.currency') || row.querySelector('[class*="currency"]') || row.querySelector('[class*="-currency"]')) return 'currency';
+
+      return 'normal';
+    },
+
     _empty() {
       return {
         id: this._uid(), timestamp: new Date().toISOString(),
@@ -402,6 +454,7 @@
         price: { amount: 0, currency: 'unknown' },
         seller: 'Unknown', league: 'Unknown',
         searchUrl: window.location.href, stats: {}, imageUrl: '', notes: '',
+        rarity: 'normal',
       };
     },
   };
@@ -918,12 +971,14 @@
         iconHTML = `<div class="poe2ph-card-img-container"><img class="poe2ph-card-img" src="${this._esc(p.imageUrl)}" alt=""></div>`;
       }
 
+      const rarityClass = `poe2ph-rarity-${p.rarity || 'normal'}`;
+
       return `
         <div class="poe2ph-card" data-id="${p.id}">
           <div class="poe2ph-card-main">
             ${iconHTML}
             <div class="poe2ph-card-info">
-              <div class="poe2ph-card-name" title="${this._esc(p.itemName)}">${this._esc(p.itemName)}</div>
+              <div class="poe2ph-card-name ${rarityClass}" title="${this._esc(p.itemName)}">${this._esc(p.itemName)}</div>
               <div class="poe2ph-card-meta">
                 <span class="poe2ph-price-badge">${p.price?.amount} ${curr}</span>
                 <span class="poe2ph-date">${ds} ${ts}</span>
