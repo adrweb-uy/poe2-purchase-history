@@ -15,7 +15,7 @@
   //  CONSTANTS
   // ============================================================
 
-  const CURRENT_VERSION = '0.1.1';
+  const CURRENT_VERSION = '0.1.2';
 
   /** "Travel to Hideout" button text in all supported languages */
   const TRAVEL_TEXTS = new Set([
@@ -36,9 +36,30 @@
   };
 
   const CURRENCY_DISPLAY = {
-    divine: 'Divine', chaos: 'Chaos', exalted: 'Exalted',
-    mirror: 'Mirror', gold: 'Gold', vaal: 'Vaal',
-    alch: 'Alch', fusing: 'Fusing', alteration: 'Alt',
+    divine:        'Divine',
+    chaos:         'Chaos',
+    exalted:       'Exalted',
+    mirror:        'Mirror',
+    gold:          'Gold',
+    vaal:          'Vaal',
+    alch:          'Alch',
+    fusing:        'Fusing',
+    alteration:    'Alt',
+    augmentation:  'Aug',
+    transmutation: 'Trans',
+    regal:         'Regal',
+    wisdom:        'Wisdom',
+    chance:        'Chance',
+    blessed:       'Blessed',
+    jewellers:     "Jeweller's",
+    gemcutters:    'GCP',
+    scouring:      'Scour',
+    chromatic:     'Chrom',
+    annulment:     'Annul',
+    ancient:       'Ancient',
+    lesser:        'Lesser',
+    greater:       'Greater',
+    perfect:       'Perfect',
   };
 
   const CLASS_INFO = {
@@ -839,35 +860,52 @@
     _price(row) {
       if (!row) return { amount: 0, currency: 'unknown' };
 
+      // Helper: map a raw currency string to a known key
+      const _mapCurrency = (raw) => {
+        const s = raw.toLowerCase().replace(/[^a-z]/g, '');
+        if (s.includes('divine'))        return 'divine';
+        if (s.includes('chaos'))         return 'chaos';
+        if (s.includes('exalted'))       return 'exalted';
+        if (s.includes('mirror'))        return 'mirror';
+        if (s.includes('augmentation') || s === 'aug') return 'augmentation';
+        if (s.includes('transmutation') || s === 'trans') return 'transmutation';
+        if (s.includes('alteration')    || s === 'alt')  return 'alteration';
+        if (s.includes('regal'))         return 'regal';
+        if (s.includes('wisdom')        || s === 'wis')  return 'wisdom';
+        if (s.includes('chance'))        return 'chance';
+        if (s.includes('blessed'))       return 'blessed';
+        if (s.includes('jeweller')      || s === 'jew')  return 'jewellers';
+        if (s.includes('gemcutter')     || s === 'gcp')  return 'gemcutters';
+        if (s.includes('scouring')      || s === 'scour') return 'scouring';
+        if (s.includes('chromatic')     || s === 'chrom') return 'chromatic';
+        if (s.includes('annulment')     || s === 'annul') return 'annulment';
+        if (s.includes('vaal'))          return 'vaal';
+        if (s.includes('ancient'))       return 'ancient';
+        if (s.includes('lesser'))        return 'lesser';
+        if (s.includes('greater'))       return 'greater';
+        if (s.includes('perfect'))       return 'perfect';
+        if (s.includes('alch'))          return 'alch';
+        if (s.includes('fusing'))        return 'fusing';
+        if (s.includes('gold'))          return 'gold';
+        return null;
+      };
+
       // 1. Try to extract from the trade site's structured price element
       const priceEl = row.querySelector('.price') || row.querySelector('[class*="price"]') || row.querySelector('[class*="Price"]');
       if (priceEl) {
         const sprite = priceEl.querySelector('.currency-sprite') || priceEl.querySelector('[class*="currency"]') || priceEl.querySelector('span[title],img[title]');
         let currency = 'unknown';
         if (sprite) {
-          const title = sprite.getAttribute('title')?.toLowerCase() || '';
-          if (title.includes('divine')) currency = 'divine';
-          else if (title.includes('chaos')) currency = 'chaos';
-          else if (title.includes('exalted')) currency = 'exalted';
-          else if (title.includes('mirror')) currency = 'mirror';
-          else if (title.includes('gold')) currency = 'gold';
-          else if (title.includes('vaal')) currency = 'vaal';
-          else if (title.includes('alch')) currency = 'alch';
-          else if (title.includes('fusing')) currency = 'fusing';
-          else if (title.includes('alteration') || title.includes('alt')) currency = 'alteration';
+          // Try title attribute first
+          const title = sprite.getAttribute('title') || '';
+          const mapped = _mapCurrency(title);
+          if (mapped) currency = mapped;
 
+          // Then try CSS class names
           if (currency === 'unknown') {
             for (const cls of sprite.classList) {
-              const c = cls.toLowerCase();
-              if (c.includes('divine')) { currency = 'divine'; break; }
-              if (c.includes('chaos')) { currency = 'chaos'; break; }
-              if (c.includes('exalted')) { currency = 'exalted'; break; }
-              if (c.includes('mirror')) { currency = 'mirror'; break; }
-              if (c.includes('gold')) { currency = 'gold'; break; }
-              if (c.includes('vaal')) { currency = 'vaal'; break; }
-              if (c.includes('alch')) { currency = 'alch'; break; }
-              if (c.includes('fusing')) { currency = 'fusing'; break; }
-              if (c.includes('alt')) { currency = 'alteration'; break; }
+              const m2 = _mapCurrency(cls);
+              if (m2) { currency = m2; break; }
             }
           }
         }
@@ -879,10 +917,21 @@
         }
       }
 
-      // 2. Fallback: match text lines
+      // 2. Fallback: match shorthand text like "1 aug", "2 chaos", "1 divine"
       const txt = row.innerText || '';
-      const m = txt.match(/(\d+(?:[.,]\d+)?)\s*(divine|chaos|exalted|mirror|gold|vaal|alch|fusing|alt(?:eration)?)/i);
-      if (m) return { amount: parseFloat(m[1].replace(',', '.')), currency: m[2].toLowerCase() };
+      const shorthand = txt.match(/(\d+(?:[.,]\d+)?)\s*(divine|exalted|chaos|mirror|vaal|regal|blessed|scouring|chromatic|annulment|ancient|lesser|greater|perfect|augmentation|aug|transmutation|trans|alteration|alt|fusing|alch|chance|wisdom|wis|jeweller(?:'?s)?|gemcutter(?:'?s)?|gcp|gold)/i);
+      if (shorthand) {
+        const mapped = _mapCurrency(shorthand[2]);
+        if (mapped) return { amount: parseFloat(shorthand[1].replace(',', '.')), currency: mapped };
+      }
+
+      // 3. Fallback: match "NxFull Currency Name" patterns like "1xOrb of Augmentation"
+      const fullName = txt.match(/(\d+)\s*[x×]\s*([A-Za-z ']+?)(?:\s*\||\s*Fee|\s*\n|$)/i);
+      if (fullName) {
+        const mapped = _mapCurrency(fullName[2]);
+        if (mapped) return { amount: parseFloat(fullName[1]), currency: mapped };
+      }
+
       return { amount: 0, currency: 'unknown' };
     },
 
@@ -927,7 +976,7 @@
       if (/ring|amulet|belt/.test(txt)) return 'accessory';
       if (/jewel|cluster/.test(txt)) return 'jewel';
       if (/gem|skill/.test(txt)) return 'gem';
-      if (/orb|shard|fragment|scarab|divine|chaos|exalted|mirror|gold/.test(txt)) return 'currency';
+      if (/orb|shard|fragment|scarab|divine|chaos|exalted|mirror|gold|augmentation|transmutation|alteration|regal|wisdom|fusing|alch|chance|blessed|jeweller|gemcutter|scouring|chromatic|annulment/.test(txt)) return 'currency';
       if (/flask/.test(txt)) return 'flask';
       if (/map|waystone/.test(txt)) return 'map';
       return 'other';
