@@ -1,4 +1,131 @@
-# POE2 Purchase History
+# POE2 Purchase History (ES)
+
+Una extensión de Chrome que inyecta un elegante panel lateral en la [página de comercio de Path of Exile 2](https://www.pathofexile.com/trade2), permitiéndote registrar cada ítem que compras sin salir de la página.
+
+---
+
+## ✨ Características
+
+### 📋 Registro de Compras
+- Registra automáticamente una compra cuando haces clic en **"Travel to Hideout"** (Viajar a la Guarida) en cualquier resultado de comercio.
+- Captura el nombre del ítem, categoría, precio, vendedor, liga y la URL de búsqueda original.
+- Detecta la rareza del ítem (Normal, Mágico, Raro, Único, Gema, Divisa) y colorea el nombre en consecuencia.
+- Muestra el arte del ítem directamente desde la página de comercio.
+
+### 🗂️ Gestión de Personajes
+- Crea personajes con nombre y clase (Witch, Ranger, Mercenary, Warrior, Monk, Sorceress, Druid, Huntress, Shadow, Templar, Marauder, Duelist).
+- Asigna compras a un personaje y filtra el historial por personaje.
+- Reasigna compras a un personaje diferente en cualquier momento desde la vista expandida de la carta.
+
+### 🗑️ Papelera / Borrado Seguro
+- Al borrar una compra, esta se mueve a la pestaña **Papelera** — nada se pierde permanentemente por accidente.
+- Restaura compras individuales o vacía toda la papelera a la vez.
+
+### ⚙️ Ajustes
+- **Idioma:** Inglés, Español, Portugués, Alemán, Francés, Ruso, Japonés, Coreano.
+- **Posición del Panel:** Lado izquierdo o derecho de la pantalla.
+- **Exportar:** Descarga tu historial de compras completo como un archivo JSON.
+- **Borrar Historial:** Borra permanentemente todas las compras (con confirmación).
+
+### 🎨 Diseño e Interfaz (UI/UX)
+- Diseño oscuro temático de Path of Exile con detalles dorados.
+- Panel deslizable animado; el margen de la página se ajusta para que el contenido de la web nunca quede oculto.
+- Cartas de compra expandibles con información del vendedor, liga, URL, notas y personaje.
+- Notificaciones Toast para cada acción.
+- Aislamiento completo con **Shadow DOM** — nunca entra en conflicto con los estilos propios de la página de comercio.
+- La posición del panel y el estado abierto/cerrado se recuerdan entre sesiones.
+
+---
+
+## 🚀 Instalación (Modo Desarrollador)
+
+1. Clona o descarga este repositorio.
+2. Abre Chrome y ve a `chrome://extensions`.
+3. Activa el **Modo desarrollador** (interruptor arriba a la derecha).
+4. Haz clic en **Cargar descomprimida** y selecciona la carpeta del repositorio.
+5. Ve a [pathofexile.com/trade2](https://www.pathofexile.com/trade2) — el botón del panel aparecerá en el borde de la pantalla.
+
+---
+
+## 🛠️ Cómo Usar
+
+1. Busca un ítem en la página de comercio como lo harías normalmente.
+2. Cuando encuentres algo que quieras, haz clic en **"Travel to Hideout"** — la compra se registra automáticamente.
+3. Abre el panel lateral (el ícono del cofre en el borde de la pantalla) para revisar tu historial.
+4. Haz clic en cualquier carta para expandirla y ver los detalles completos, agregar una nota o reasignarla a un personaje.
+
+---
+
+## 📦 Idiomas Soportados para Auto-Detección
+
+La extensión detecta el botón "Travel to Hideout" en:
+Inglés · Español · Portugués · Alemán · Francés · Ruso · Japonés · Coreano
+
+---
+
+## 📄 Historial de Cambios (Changelog)
+
+### v0.1.4 — 2026-06-04
+- **Novedad:** Se agregaron los retratos oficiales de las clases de Path of Exile 2 al selector de personajes y al resumen de gastos.
+- **Novedad:** Se agregó la capacidad de borrar personajes. Al borrar un personaje, todas sus compras se migran de forma segura a la categoría "Sin Personaje" para no perder el historial.
+- **UI:** Se rediseñó el resumen de gastos del personaje para que coincida con el diseño elegante de las cartas de ítem, incluyendo los retratos de clase en tamaño grande.
+
+### v0.1.3 — 2026-06-04
+- **Corrección:** El término `annul` (usado en listados como `~b/o 1 annul`) ahora se resuelve correctamente a Orb of Annulment. También se agregaron los términos `scour` y `chrom` para Scouring Orb y Chromatic Orb.
+
+### v0.1.2 — 2026-06-04
+- **Corrección:** La detección de divisas ahora reconoce todos los orbes comunes de POE2 y sus abreviaturas: Orb of Augmentation (`aug`), Orb of Transmutation (`trans`), Orb of Alteration (`alt`), Regal Orb, Scroll of Wisdom, Orb of Chance, Blessed Orb, Jeweller's Orb, Gemcutter's Prism (`gcp`), Scouring Orb, Chromatic Orb, Annulment Orb, y más.
+- **Corrección:** Se agregó un tercer método de extracción de precio que detecta el patrón `NxNombre Completo de la Divisa` (ej. `1xOrb of Augmentation`) directamente del texto, para que los ítems listados en monedas menos comunes ya no se registren como `0 unknown`.
+
+### v0.1.1 — 2026-06-04
+- **Corrección:** El panel lateral ya no se abre y cierra de golpe al actualizar la página. Ahora el panel siempre se inicializa en estado cerrado en cada carga de la página, eliminando el error visual de la animación.
+
+### v0.1.0 — Lanzamiento Inicial
+- Seguimiento de compras mediante intercepción del clic en "Travel to Hideout".
+- Panel de historial de compras con cartas expandibles/colapsables.
+- Borrado seguro (Pestaña papelera) con opciones de restaurar y borrar permanentemente.
+- Sistema de personajes con selección de clase y asignación por compra.
+- Soporte para 8 idiomas (EN, ES, PT, DE, FR, RU, JA, KO).
+- Posicionamiento del panel a la izquierda o derecha.
+- Exportación a JSON.
+- Aislamiento mediante Shadow DOM.
+- Opciones e historial persistentes usando `chrome.storage.local`.
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+poe2-purchase-history/
+├── manifest.json          # Manifiesto de la extensión (MV3)
+├── background.js          # Service worker (relevo de mensajes)
+├── content/
+│   ├── content.js         # Script principal inyectado — toda la UI y lógica
+│   └── content.css        # Estilos del panel (cargados en Shadow DOM)
+├── popup/
+│   ├── popup.html         # Ventana emergente (popup)
+│   ├── popup.js
+│   ├── popup.css
+│   └── flags/             # Banderas PNG para el selector de idiomas
+└── icons/
+    ├── chest_16.png
+    ├── chest_48.png
+    └── chest_128.png
+```
+
+---
+
+## 📝 Licencia
+
+MIT
+
+
+<br><br><br>
+<hr>
+<br><br><br>
+
+
+# POE2 Purchase History (EN)
 
 A Chrome extension that injects a sleek side panel into the [Path of Exile 2 trade site](https://www.pathofexile.com/trade2), letting you track every item you buy without leaving the page.
 
@@ -60,36 +187,6 @@ A Chrome extension that injects a sleek side panel into the [Path of Exile 2 tra
 
 The extension detects the "Travel to Hideout" button in:
 English · Español · Português · Deutsch · Français · Русский · 日本語 · 한국어
-
----
-
-## 📄 Historial de Cambios (Changelog - ES)
-
-### v0.1.4 — 2026-06-04
-- **Novedad:** Se agregaron los retratos oficiales de las clases de Path of Exile 2 al selector de personajes y al resumen de gastos.
-- **Novedad:** Se agregó la capacidad de borrar personajes. Al borrar un personaje, todas sus compras se migran de forma segura a la categoría "Sin Personaje" para no perder el historial.
-- **UI:** Se rediseñó el resumen de gastos del personaje para que coincida con el diseño elegante de las cartas de ítem, incluyendo los retratos de clase en tamaño grande.
-
-### v0.1.3 — 2026-06-04
-- **Corrección:** El término `annul` (usado en listados como `~b/o 1 annul`) ahora se resuelve correctamente a Orb of Annulment. También se agregaron los términos `scour` y `chrom` para Scouring Orb y Chromatic Orb.
-
-### v0.1.2 — 2026-06-04
-- **Corrección:** La detección de divisas ahora reconoce todos los orbes comunes de POE2 y sus abreviaturas: Orb of Augmentation (`aug`), Orb of Transmutation (`trans`), Orb of Alteration (`alt`), Regal Orb, Scroll of Wisdom, Orb of Chance, Blessed Orb, Jeweller's Orb, Gemcutter's Prism (`gcp`), Scouring Orb, Chromatic Orb, Annulment Orb, y más.
-- **Corrección:** Se agregó un tercer método de extracción de precio que detecta el patrón `NxNombre Completo de la Divisa` (ej. `1xOrb of Augmentation`) directamente del texto, para que los ítems listados en monedas menos comunes ya no se registren como `0 unknown`.
-
-### v0.1.1 — 2026-06-04
-- **Corrección:** El panel lateral ya no se abre y cierra de golpe al actualizar la página. Ahora el panel siempre se inicializa en estado cerrado en cada carga de la página, eliminando el error visual de la animación.
-
-### v0.1.0 — Lanzamiento Inicial
-- Seguimiento de compras mediante intercepción del clic en "Travel to Hideout".
-- Panel de historial de compras con cartas expandibles/colapsables.
-- Borrado seguro (Pestaña papelera) con opciones de restaurar y borrar permanentemente.
-- Sistema de personajes con selección de clase y asignación por compra.
-- Soporte para 8 idiomas (EN, ES, PT, DE, FR, RU, JA, KO).
-- Posicionamiento del panel a la izquierda o derecha.
-- Exportación a JSON.
-- Aislamiento mediante Shadow DOM.
-- Opciones e historial persistentes usando `chrome.storage.local`.
 
 ---
 
