@@ -46,6 +46,7 @@
       "resources": [
         "content/content.css",
         "icons/*.png",
+        "icons/classes/*.webp",
         "popup/flags/*.png"
       ],
       "matches": [

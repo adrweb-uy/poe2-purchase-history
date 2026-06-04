@@ -64,21 +64,21 @@
 
   const CLASS_INFO = {
     witch:     { name: 'Witch',     emoji: '🧙‍♀️', color: '#3a0a6a', accent: '#b060ff',
-                 portrait: '' },
+                 portrait: 'icons/classes/witch.webp' },
     ranger:    { name: 'Ranger',    emoji: '🏹',    color: '#0a3a1a', accent: '#40c070',
-                 portrait: '' },
+                 portrait: 'icons/classes/ranger.webp' },
     mercenary: { name: 'Mercenary', emoji: '🎯',    color: '#3a1a0a', accent: '#c08040',
-                 portrait: '' },
+                 portrait: 'icons/classes/mercenary.webp' },
     warrior:   { name: 'Warrior',   emoji: '🛡️',    color: '#3a0a0a', accent: '#c04040',
-                 portrait: '' },
+                 portrait: 'icons/classes/warrior.webp' },
     monk:      { name: 'Monk',      emoji: '🧘',    color: '#0a1a3a', accent: '#4080c0',
-                 portrait: '' },
+                 portrait: 'icons/classes/monk.webp' },
     sorceress: { name: 'Sorceress', emoji: '⚡',    color: '#0a0a3a', accent: '#6060ff',
-                 portrait: '' },
+                 portrait: 'icons/classes/sorceress.webp' },
     druid:     { name: 'Druid',     emoji: '🐻',    color: '#1a3a0a', accent: '#80c040',
-                 portrait: '' },
+                 portrait: 'icons/classes/druid.webp' },
     huntress:  { name: 'Huntress',  emoji: '🐆',    color: '#2a1a0a', accent: '#c07020',
-                 portrait: '' },
+                 portrait: 'icons/classes/huntress.webp' },
     shadow:    { name: 'Shadow',    emoji: '👤',    color: '#0a0a1a', accent: '#6060a0',
                  portrait: '' },
     templar:   { name: 'Templar',   emoji: '⛪',    color: '#2a1a00', accent: '#c0a000',
@@ -1320,7 +1320,10 @@
                 ${Object.entries(CLASS_INFO).map(([key, value]) => `
                   <button class="poe2ph-class-option" data-class="${key}" title="${t(`classes.${key}`)}" 
                     style="--cls-color:${value.color};--cls-accent:${value.accent}">
-                    <span class="poe2ph-class-emoji-fb">${value.emoji}</span>
+                    ${value.portrait
+                      ? `<img class="poe2ph-class-portrait" src="${chrome.runtime.getURL(value.portrait)}" alt="">`
+                      : `<span class="poe2ph-class-emoji-fb">${value.emoji}</span>`
+                    }
                     <span class="poe2ph-class-name">${t(`classes.${key}`)}</span>
                   </button>
                 `).join('')}
