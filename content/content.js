@@ -1025,6 +1025,8 @@
 
     async init() {
       this.settings  = await Storage.getSettings();
+      // Always start closed on page load to avoid the open→close flash on refresh
+      this.settings.sidebarOpen = false;
       this.purchases = await Storage.getPurchases();
       this.characters = await Storage.getCharacters();
       _lang          = this.settings.language || 'en';
@@ -1034,11 +1036,6 @@
       this._attachListeners();
       this._renderHistory();
       this._setupMutationObserver();
-
-      // Restore open state without animation on page load
-      if (this.settings.sidebarOpen) {
-        this._toggle(false);
-      }
 
       // Close language dropdown when clicking outside
       document.addEventListener('click', (e) => {
