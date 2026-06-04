@@ -15,7 +15,7 @@
   //  CONSTANTS
   // ============================================================
 
-  const CURRENT_VERSION = '0.1.0';
+  const CURRENT_VERSION = '0.1.1';
 
   /** "Travel to Hideout" button text in all supported languages */
   const TRAVEL_TEXTS = new Set([
