@@ -1292,23 +1292,15 @@
             <!-- Character selector bar -->
               <div class="poe2ph-char-selector">
                 <span class="poe2ph-char-label">${t('charBar.label')}</span>
-                <div class="poe2ph-char-select-wrapper">
-                  <img class="poe2ph-char-active-portrait poe2ph-hidden" id="poe2ph-char-active-portrait" src="" alt="">
-                  <select class="poe2ph-char-select" id="poe2ph-char-select">
-                    <option value="all" ${this.settings.activeCharacterId === 'all' ? 'selected' : ''}>${t('charBar.all')}</option>
-                    ${this.characters.map(c => `
-                      <option value="${c.id}" ${this.settings.activeCharacterId === c.id ? 'selected' : ''}>
-                        ${CLASS_INFO[c.class]?.emoji || '👤'} ${c.name}
-                      </option>
-                    `).join('')}
-                    <option value="none" ${this.settings.activeCharacterId === 'none' ? 'selected' : ''}>${t('charBar.none')}</option>
-                  </select>
-                </div>
-                <button class="poe2ph-char-delete-btn poe2ph-hidden" id="poe2ph-char-delete-btn" title="Delete Character">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2m-6 5v6m4-6v6"/>
-                  </svg>
-                </button>
+                <select class="poe2ph-char-select" id="poe2ph-char-select">
+                  <option value="all" ${this.settings.activeCharacterId === 'all' ? 'selected' : ''}>${t('charBar.all')}</option>
+                  ${this.characters.map(c => `
+                    <option value="${c.id}" ${this.settings.activeCharacterId === c.id ? 'selected' : ''}>
+                      ${CLASS_INFO[c.class]?.emoji || '👤'} ${c.name}
+                    </option>
+                  `).join('')}
+                  <option value="none" ${this.settings.activeCharacterId === 'none' ? 'selected' : ''}>${t('charBar.none')}</option>
+                </select>
               </div>
               <button class="poe2ph-char-add-btn" id="poe2ph-char-add-btn" title="${t('charBar.newBtn')}">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
@@ -1445,30 +1437,6 @@
       `;
     }
 
-    _updateCharSelectorUI() {
-      const $ = id => this.shadow.getElementById(id);
-      const portrait = $('poe2ph-char-active-portrait');
-      const delBtn = $('poe2ph-char-delete-btn');
-      if (!portrait || !delBtn) return;
-
-      const act = this.settings.activeCharacterId;
-      const charObj = this.characters.find(c => c.id === act);
-
-      if (charObj) {
-        const cInfo = CLASS_INFO[charObj.class] || null;
-        if (cInfo && cInfo.portrait) {
-          portrait.src = chrome.runtime.getURL(cInfo.portrait);
-          portrait.classList.remove('poe2ph-hidden');
-        } else {
-          portrait.classList.add('poe2ph-hidden');
-        }
-        delBtn.classList.remove('poe2ph-hidden');
-      } else {
-        portrait.classList.add('poe2ph-hidden');
-        delBtn.classList.add('poe2ph-hidden');
-      }
-    }
-
     // ----------------------------------------------------------
     //  Event Listeners
     // ----------------------------------------------------------
@@ -1487,7 +1455,6 @@
 
       this._attachSettingsListeners();
       this._attachCharacterListeners();
-      this._updateCharSelectorUI();
     }
 
     _attachSettingsListeners() {
@@ -1650,25 +1617,42 @@
           }).join('');
           let labelHTML = '';
           if (activeChar === 'all') {
-            labelHTML = `<div class="poe2ph-spend-label">📊 Total</div>`;
+            labelHTML = `<div class="poe2ph-spend-label" style="margin-bottom:8px;">📊 Total</div>`;
           } else {
             const charObj = this.characters.find(c => c.id === activeChar);
             const spentText = t('settings.version') === 'Version' ? 'Spent' : 'Gastado';
             if (charObj) {
-              const cInfo = CLASS_INFO[charObj.className] || null;
+              const cInfo = CLASS_INFO[charObj.class] || null;
+              
+              const delBtnHTML = `
+                <button class="poe2ph-char-delete-btn poe2ph-summary-delete-btn" data-id="${charObj.id}" title="Delete Character">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2m-6 5v6m4-6v6"/>
+                  </svg>
+                </button>
+              `;
+
               if (cInfo && cInfo.portrait) {
                 labelHTML = `
-                  <div class="poe2ph-spend-char">
-                    <img class="poe2ph-spend-char-img" src="${chrome.runtime.getURL(cInfo.portrait)}" alt="">
-                    <span class="poe2ph-spend-char-name">${charObj.name}</span>
-                    <span class="poe2ph-spend-char-spent">– ${spentText}</span>
+                  <div class="poe2ph-spend-char-header">
+                    <div class="poe2ph-spend-char">
+                      <img class="poe2ph-spend-char-img" src="${chrome.runtime.getURL(cInfo.portrait)}" alt="">
+                      <span class="poe2ph-spend-char-name">${charObj.name}</span>
+                      <span class="poe2ph-spend-char-spent">– ${spentText}</span>
+                    </div>
+                    ${delBtnHTML}
                   </div>
                 `;
               } else {
-                labelHTML = `<div class="poe2ph-spend-label">${charObj.name} – ${spentText}</div>`;
+                labelHTML = `
+                  <div class="poe2ph-spend-char-header">
+                    <div class="poe2ph-spend-label">${charObj.name} – ${spentText}</div>
+                    ${delBtnHTML}
+                  </div>
+                `;
               }
             } else {
-              labelHTML = `<div class="poe2ph-spend-label">📊 ${spentText}</div>`;
+              labelHTML = `<div class="poe2ph-spend-label" style="margin-bottom:8px;">📊 ${spentText}</div>`;
             }
           }
 
@@ -1676,6 +1660,13 @@
             ${labelHTML}
             <div class="poe2ph-spend-badges">${badges}</div>
           `;
+
+          const sumDelBtn = summaryEl.querySelector('.poe2ph-summary-delete-btn');
+          if (sumDelBtn) {
+            sumDelBtn.addEventListener('click', () => {
+              this._deleteCharacter(sumDelBtn.dataset.id);
+            });
+          }
           summaryEl.classList.remove('poe2ph-hidden');
         } else {
           summaryEl.classList.add('poe2ph-hidden');
@@ -2228,18 +2219,7 @@
         select.addEventListener('change', () => {
           this.settings.activeCharacterId = select.value;
           Storage.saveSettings(this.settings).catch(console.error);
-          this._updateCharSelectorUI();
           this._renderHistory();
-        });
-      }
-
-      // Delete character
-      const delBtn = $('poe2ph-char-delete-btn');
-      if (delBtn) {
-        delBtn.addEventListener('click', () => {
-          if (this.settings.activeCharacterId && this.settings.activeCharacterId !== 'all' && this.settings.activeCharacterId !== 'none') {
-            this._deleteCharacter(this.settings.activeCharacterId);
-          }
         });
       }
 

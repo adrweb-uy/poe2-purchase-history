@@ -362,43 +362,30 @@
   white-space: nowrap;
 }
 
-.poe2ph-char-select-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.poe2ph-char-select {
   background: var(--bg-card);
   border: 1px solid var(--border-dim);
   border-radius: 5px;
-  padding-left: 6px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  flex: 1;
-  max-width: 170px;
-}
-.poe2ph-char-select-wrapper:focus-within {
-  border-color: var(--gold-deep);
-  box-shadow: 0 0 6px rgba(106, 78, 18, 0.25);
-}
-
-.poe2ph-char-active-portrait {
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
-  object-fit: cover;
-  object-position: top center;
-  flex-shrink: 0;
-}
-
-.poe2ph-char-select {
-  background: transparent;
-  border: none;
-  padding: 5px 2px 5px 0;
+  padding: 5px 8px;
   color: var(--gold-light);
   font-size: 11px;
   font-weight: 500;
   cursor: pointer;
   outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
   flex: 1;
-  width: 100%;
+  max-width: 170px;
+}
+.poe2ph-char-select:focus {
+  border-color: var(--gold-deep);
+  box-shadow: 0 0 6px rgba(106, 78, 18, 0.25);
+}
+
+.poe2ph-spend-char-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
 .poe2ph-char-delete-btn {
