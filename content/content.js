@@ -87,7 +87,7 @@
       appSubtitle: 'Trade Companion',
       banner: {
         title:      'NEW VERSION',
-        text:       'POE2 Purchase History has been updated to version 0.1.0.',
+        text:       'POE2 Purchase History has been updated to version {version}.',
       },
       tabs: { history: 'History', trash: 'Trash', settings: 'Settings' },
       charBar: {
@@ -159,7 +159,7 @@
       appSubtitle: 'Compañero de Trade',
       banner: {
         title:      'NUEVA VERSIÓN',
-        text:       'POE2 Historial de Compras se actualizó a la versión 0.1.0.',
+        text:       'POE2 Historial de Compras se actualizó a la versión {version}.',
       },
       tabs: { history: 'Historial', trash: 'Borrado', settings: 'Ajustes' },
       charBar: {
@@ -231,7 +231,7 @@
       appSubtitle: 'Companheiro de Trade',
       banner: {
         title:      'NOVA VERSÃO',
-        text:       'O POE2 Histórico de Compras foi atualizado para a versão 0.1.0.',
+        text:       'O POE2 Histórico de Compras foi atualizado para a versão {version}.',
       },
       tabs: { history: 'Histórico', trash: 'Lixeira', settings: 'Opções' },
       charBar: {
@@ -303,7 +303,7 @@
       appSubtitle: 'Handelsbegleiter',
       banner: {
         title:      'NEUE VERSION',
-        text:       'POE2 Kaufhistorie wurde auf Version 0.1.0 aktualisiert.',
+        text:       'POE2 Kaufhistorie wurde auf Version {version} aktualisiert.',
       },
       tabs: { history: 'Verlauf', trash: 'Papierkorb', settings: 'Einstellungen' },
       charBar: {
@@ -375,7 +375,7 @@
       appSubtitle: 'Compagnon de Trade',
       banner: {
         title:      'NOUVELLE VERSION',
-        text:       'L’historique des achats POE2 a été mis à jour vers la version 0.1.0.',
+        text:       'L’historique des achats POE2 a été mis à jour vers la version {version}.',
       },
       tabs: { history: 'Historique', trash: 'Corbeille', settings: 'Paramètres' },
       charBar: {
@@ -447,7 +447,7 @@
       appSubtitle: 'Торговый компаньон',
       banner: {
         title:      'НОВАЯ ВЕРСИЯ',
-        text:       'История покупок POE2 обновлена до версии 0.1.0.',
+        text:       'История покупок POE2 обновлена до версии {version}.',
       },
       tabs: { history: 'История', trash: 'Удаленные', settings: 'Настройки' },
       charBar: {
@@ -519,7 +519,7 @@
       appSubtitle: 'トレードコンパニオン',
       banner: {
         title:      '新バージョン',
-        text:       'POE2購入履歴がバージョン0.1.0にアップデートされました。',
+        text:       'POE2購入履歴がバージョン{version}にアップデートされました。',
       },
       tabs: { history: '履歴', trash: 'ゴミ箱', settings: '設定' },
       charBar: {
@@ -591,7 +591,7 @@
       appSubtitle: '거래 동반자',
       banner: {
         title:      '새 버전',
-        text:       'POE2 구매 내역이 0.1.0 버전으로 업데이트되었습니다.',
+        text:       'POE2 구매 내역이 {version} 버전으로 업데이트되었습니다.',
       },
       tabs: { history: '내역', trash: '휴지통', settings: '설정' },
       charBar: {
@@ -1198,7 +1198,7 @@
           <div class="poe2ph-banner${showBanner ? '' : ' poe2ph-hidden'}" id="poe2ph-banner">
             <div class="poe2ph-banner-content">
               <div class="poe2ph-banner-label">${t('banner.title')}</div>
-              <div class="poe2ph-banner-text">${t('banner.text')}</div>
+              <div class="poe2ph-banner-text">${t('banner.text').replace('{version}', CURRENT_VERSION)}</div>
             </div>
             <button class="poe2ph-banner-close" id="poe2ph-banner-close" title="Dismiss announcement">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
