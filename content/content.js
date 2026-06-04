@@ -1616,9 +1616,11 @@
                        : currency === 'chaos' ? 'chaos' : 'normal';
             return `<span class="poe2ph-spend-badge poe2ph-spend-badge-${tier}">${fmt} ${display}</span>`;
           }).join('');
-          let labelHTML = '';
           if (activeChar === 'all') {
-            labelHTML = `<div class="poe2ph-spend-label" style="margin-bottom:8px;">📊 Total</div>`;
+            summaryEl.innerHTML = `
+              <div class="poe2ph-spend-label" style="margin-bottom:8px;">📊 Total</div>
+              <div class="poe2ph-spend-badges">${badges}</div>
+            `;
           } else {
             const charObj = this.characters.find(c => c.id === activeChar);
             const spentText = t('settings.version') === 'Version' ? 'Spent' : 'Gastado';
@@ -1626,41 +1628,45 @@
               const cInfo = CLASS_INFO[charObj.class] || null;
               
               const delBtnHTML = `
-                <button class="poe2ph-char-delete-btn poe2ph-summary-delete-btn" data-id="${charObj.id}" title="Delete Character">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <button class="poe2ph-char-delete-btn poe2ph-summary-delete-btn" data-id="${charObj.id}" title="Delete Character" style="align-self: center; height: 32px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                     <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2m-6 5v6m4-6v6"/>
                   </svg>
                 </button>
               `;
 
               if (cInfo && cInfo.portrait) {
-                labelHTML = `
-                  <div class="poe2ph-spend-char-header">
-                    <div class="poe2ph-spend-char">
-                      <img class="poe2ph-spend-char-img" src="${chrome.runtime.getURL(cInfo.portrait)}" alt="">
-                      <span class="poe2ph-spend-char-name">${charObj.name}</span>
-                      <span class="poe2ph-spend-char-spent">– ${spentText}</span>
+                summaryEl.innerHTML = `
+                  <div class="poe2ph-card-main" style="padding:0; background:transparent; border:none; box-shadow:none;">
+                    <div class="poe2ph-card-img-container" style="width:48px; height:48px; border-radius:4px;">
+                      <img class="poe2ph-card-img" style="object-fit:cover; object-position:top;" src="${chrome.runtime.getURL(cInfo.portrait)}" alt="">
+                    </div>
+                    <div class="poe2ph-card-info" style="display:flex; flex-direction:column; gap:6px; justify-content:center;">
+                      <div style="display:flex; align-items:baseline; gap:6px;">
+                        <span class="poe2ph-card-name" style="font-size:15px; letter-spacing:0.5px;">${charObj.name}</span>
+                        <span class="poe2ph-spend-label" style="font-size:10px;">– ${spentText}</span>
+                      </div>
+                      <div class="poe2ph-spend-badges" style="margin:0;">${badges}</div>
                     </div>
                     ${delBtnHTML}
                   </div>
                 `;
               } else {
-                labelHTML = `
+                summaryEl.innerHTML = `
                   <div class="poe2ph-spend-char-header">
                     <div class="poe2ph-spend-label">${charObj.name} – ${spentText}</div>
                     ${delBtnHTML}
                   </div>
+                  <div class="poe2ph-spend-badges">${badges}</div>
                 `;
               }
             } else {
-              labelHTML = `<div class="poe2ph-spend-label" style="margin-bottom:8px;">📊 ${spentText}</div>`;
+              summaryEl.innerHTML = `
+                <div class="poe2ph-spend-label" style="margin-bottom:8px;">📊 ${spentText}</div>
+                <div class="poe2ph-spend-badges">${badges}</div>
+              `;
             }
           }
-
-          summaryEl.innerHTML = `
-            ${labelHTML}
-            <div class="poe2ph-spend-badges">${badges}</div>
-          `;
 
           const sumDelBtn = summaryEl.querySelector('.poe2ph-summary-delete-btn');
           if (sumDelBtn) {
