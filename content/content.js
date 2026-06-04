@@ -15,7 +15,7 @@
   //  CONSTANTS
   // ============================================================
 
-  const CURRENT_VERSION = '0.1.3';
+  const CURRENT_VERSION = '0.1.5';
 
   /** "Travel to Hideout" button text in all supported languages */
   const TRAVEL_TEXTS = new Set([
@@ -114,6 +114,7 @@
         charLabel: 'Character',
         moveTo: 'Move to:',
         titleNew: 'Create New Character',
+        duplicateName: 'A character with that name already exists.',
       },
       classes: {
         witch: 'Witch', ranger: 'Ranger', mercenary: 'Mercenary',
@@ -150,6 +151,10 @@
         clearHistoryDesc: 'Permanently delete all recorded purchases.',
         clearBtn:     'Clear All',
         clearConfirm: 'Are you sure? This cannot be undone.',
+        clearChars:       'Clear All Characters',
+        clearCharsDesc:   'Delete all characters. Their items will be unassigned.',
+        clearCharsBtn:    'Delete All Characters',
+        clearCharsConfirm: 'Are you sure? All characters will be permanently deleted.',
         version:      'Version',
       },
       categories: {
@@ -186,6 +191,7 @@
         charLabel: 'Personaje',
         moveTo: 'Mover a:',
         titleNew: 'Crear Nuevo Personaje',
+        duplicateName: 'Ya existe un personaje con ese nombre.',
       },
       classes: {
         witch: 'Bruja', ranger: 'Exploradora', mercenary: 'Mercenario',
@@ -222,6 +228,10 @@
         clearHistoryDesc: 'Eliminá permanentemente todas las compras registradas.',
         clearBtn:     'Limpiar Todo',
         clearConfirm: '¿Estás seguro? Esta acción no se puede deshacer.',
+        clearChars:       'Borrar Todos los Personajes',
+        clearCharsDesc:   'Eliminá todos los personajes. Sus items quedarán sin asignar.',
+        clearCharsBtn:    'Borrar Todos los Personajes',
+        clearCharsConfirm: '¿Estás seguro? Todos los personajes se eliminarán permanentemente.',
         version:      'Versión',
       },
       categories: {
@@ -258,6 +268,7 @@
         charLabel: 'Personagem',
         moveTo: 'Mover para:',
         titleNew: 'Criar Novo Personagem',
+        duplicateName: 'Já existe um personagem com esse nome.',
       },
       classes: {
         witch: 'Bruxa', ranger: 'Arqueira', mercenary: 'Mercenário',
@@ -294,6 +305,10 @@
         clearHistoryDesc: 'Excluir permanentemente todas as compras registradas.',
         clearBtn:     'Limpar Tudo',
         clearConfirm: 'Tem certeza? Esta ação não pode ser desfeita.',
+        clearChars:       'Apagar Todos os Personagens',
+        clearCharsDesc:   'Exclua todos os personagens. Seus itens ficarão sem atribuição.',
+        clearCharsBtn:    'Apagar Todos os Personagens',
+        clearCharsConfirm: 'Tem certeza? Todos os personagens serão excluídos permanentemente.',
         version:      'Versão',
       },
       categories: {
@@ -330,6 +345,7 @@
         charLabel: 'Charakter',
         moveTo: 'Verschieben nach:',
         titleNew: 'Neuen Charakter erstellen',
+        duplicateName: 'Ein Charakter mit diesem Namen existiert bereits.',
       },
       classes: {
         witch: 'Hexe', ranger: 'Waldläuferin', mercenary: 'Söldner',
@@ -366,6 +382,10 @@
         clearHistoryDesc: 'Lösche alle aufgezeichneten Käufe endgültig.',
         clearBtn:     'Alles löschen',
         clearConfirm: 'Bist du sicher? Dies kann nicht rückgängig gemacht werden.',
+        clearChars:       'Alle Charaktere löschen',
+        clearCharsDesc:   'Lösche alle Charaktere. Ihre Items werden nicht mehr zugeordnet.',
+        clearCharsBtn:    'Alle Charaktere löschen',
+        clearCharsConfirm: 'Bist du sicher? Alle Charaktere werden dauerhaft gelöscht.',
         version:      'Version',
       },
       categories: {
@@ -402,6 +422,7 @@
         charLabel: 'Personnage',
         moveTo: 'Déplacer vers :',
         titleNew: 'Créer un nouveau personnage',
+        duplicateName: 'Un personnage avec ce nom existe déjà.',
       },
       classes: {
         witch: 'Sorcière', ranger: 'Chasseresse', mercenary: 'Mercenaire',
@@ -438,6 +459,10 @@
         clearHistoryDesc: 'Supprimer définitivement tous les achats enregistrés.',
         clearBtn:     'Tout effacer',
         clearConfirm: 'Êtes-vous sûr ? Cette action est irréversible.',
+        clearChars:       'Supprimer tous les personnages',
+        clearCharsDesc:   'Supprimez tous les personnages. Leurs objets seront non attribués.',
+        clearCharsBtn:    'Supprimer tous les personnages',
+        clearCharsConfirm: 'Êtes-vous sûr ? Tous les personnages seront supprimés définitivement.',
         version:      'Version',
       },
       categories: {
@@ -474,6 +499,7 @@
         charLabel: 'Персонаж',
         moveTo: 'Переместить в:',
         titleNew: 'Создать нового персонажа',
+        duplicateName: 'Персонаж с таким именем уже существует.',
       },
       classes: {
         witch: 'Ведьма', ranger: 'Охотница', mercenary: 'Наемник',
@@ -510,6 +536,10 @@
         clearHistoryDesc: 'Навсегда удалить все записанные покупки.',
         clearBtn:     'Очистить всё',
         clearConfirm: 'Вы уверены? Это действие невозможно отменить.',
+        clearChars:       'Удалить всех персонажей',
+        clearCharsDesc:   'Удалите всех персонажей. Их предметы станут неназначенными.',
+        clearCharsBtn:    'Удалить всех персонажей',
+        clearCharsConfirm: 'Вы уверены? Все персонажи будут удалены навсегда.',
         version:      'Версия',
       },
       categories: {
@@ -546,6 +576,7 @@
         charLabel: 'キャラクター',
         moveTo: '移動先:',
         titleNew: '新しいキャラクターを作成',
+        duplicateName: 'その名前のキャラクターはすでに存在します。',
       },
       classes: {
         witch: 'ウィッチ', ranger: 'レンジャー', mercenary: 'マーセナリー',
@@ -582,6 +613,10 @@
         clearHistoryDesc: '記録されたすべての購入履歴を完全に削除します。',
         clearBtn:     'すべて消去',
         clearConfirm: '本当によろしいですか？この操作は取り消せません。',
+        clearChars:       'すべてのキャラクターを削除',
+        clearCharsDesc:   'すべてのキャラクターを削除します。アイテムは未割り当てになります。',
+        clearCharsBtn:    'すべてのキャラクターを削除',
+        clearCharsConfirm: '本当に削除しますか？この操作は取り消せません。',
         version:      'バージョン',
       },
       categories: {
@@ -618,6 +653,7 @@
         charLabel: '캐릭터',
         moveTo: '이동 대상:',
         titleNew: '새 캐릭터 생성',
+        duplicateName: '해당 이름의 캐릭터가 이미 존재합니다.',
       },
       classes: {
         witch: '위치', ranger: '레인저', mercenary: '머서너리',
@@ -654,6 +690,10 @@
         clearHistoryDesc: '기록된 모든 구매 내역을 영구히 삭제합니다.',
         clearBtn:     '모두 삭제',
         clearConfirm: '정말이십니까? 이 작업은 취소할 수 없습니다.',
+        clearChars:       '모든 캐릭터 삭제',
+        clearCharsDesc:   '모든 캐릭터를 삭제합니다. 아이템은 미할당 상태가 됩니다.',
+        clearCharsBtn:    '모든 캐릭터 삭제',
+        clearCharsConfirm: '정말이십니까? 모든 캐릭터가 영구히 삭제됩니다.',
         version:      '버전',
       },
       categories: {
@@ -1423,11 +1463,18 @@
             <button class="poe2ph-btn poe2ph-btn-primary" id="poe2ph-export-btn">${t('settings.exportBtn')}</button>
           </div>
 
-          <!-- Clear -->
+          <!-- Clear History -->
           <div class="poe2ph-setting-card poe2ph-danger-card">
             <h3 class="poe2ph-setting-title poe2ph-danger-title">${t('settings.clearHistory')}</h3>
             <p class="poe2ph-setting-desc">${t('settings.clearHistoryDesc')}</p>
             <button class="poe2ph-btn poe2ph-btn-danger" id="poe2ph-clear-btn">${t('settings.clearBtn')}</button>
+          </div>
+
+          <!-- Clear All Characters -->
+          <div class="poe2ph-setting-card poe2ph-danger-card">
+            <h3 class="poe2ph-setting-title poe2ph-danger-title">${t('settings.clearChars')}</h3>
+            <p class="poe2ph-setting-desc">${t('settings.clearCharsDesc')}</p>
+            <button class="poe2ph-btn poe2ph-btn-danger" id="poe2ph-clear-chars-btn">${t('settings.clearCharsBtn')}</button>
           </div>
 
           <div class="poe2ph-settings-footer">
@@ -1488,6 +1535,7 @@
       // Export / Clear
       $('poe2ph-export-btn')?.addEventListener('click', () => this._exportHistory());
       $('poe2ph-clear-btn')?.addEventListener('click', () => this._clearHistory());
+      $('poe2ph-clear-chars-btn')?.addEventListener('click', () => this._clearAllCharacters());
     }
 
     // ----------------------------------------------------------
@@ -2120,6 +2168,41 @@
       this._toast(t('toast.cleared'));
     }
 
+    async _clearAllCharacters() {
+      if (!this.characters.length) return;
+      if (!confirm(t('settings.clearCharsConfirm'))) return;
+
+      this.characters = [];
+      await Storage.setCharacters([]);
+
+      // Unassign all purchases from characters
+      const allPurchases = await Storage.getPurchases();
+      let changed = false;
+      allPurchases.forEach(p => {
+        if (p.characterId && p.characterId !== 'none') {
+          p.characterId = 'none';
+          changed = true;
+        }
+      });
+      if (changed) {
+        await Storage.setPurchases(allPurchases);
+        this.purchases.forEach(p => { if (p.characterId !== 'none') p.characterId = 'none'; });
+      }
+
+      this.settings.activeCharacterId = 'all';
+      await Storage.saveSettings(this.settings);
+
+      const wasOpen = this.isOpen;
+      this.root.innerHTML = this._containerHTML();
+      this._attachListeners();
+      this._renderHistory();
+      if (wasOpen) {
+        this.shadow.getElementById('poe2ph-panel')?.classList.add('poe2ph-panel-open');
+        this._switchTab(this.activeTab);
+      }
+      this._toast(t('settings.clearChars'));
+    }
+
     // ----------------------------------------------------------
     //  Record Purchase (called from MutationObserver)
     // ----------------------------------------------------------
@@ -2273,6 +2356,15 @@
 
       if (!name) {
         alert(_lang === 'es' ? 'Por favor ingresá un nombre' : 'Please enter a name');
+        return;
+      }
+
+      // Check for duplicate name (case-insensitive)
+      const isDuplicate = this.characters.some(c => c.name.trim().toLowerCase() === name.toLowerCase());
+      if (isDuplicate) {
+        alert(t('charBar.duplicateName'));
+        nameInp.focus();
+        nameInp.select();
         return;
       }
 
