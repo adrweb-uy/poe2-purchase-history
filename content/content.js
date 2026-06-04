@@ -63,18 +63,30 @@
   };
 
   const CLASS_INFO = {
-    witch:     { name: 'Witch', emoji: '🧙‍♀️' },
-    ranger:    { name: 'Ranger', emoji: '🏹' },
-    mercenary: { name: 'Mercenary', emoji: '🎯' },
-    warrior:   { name: 'Warrior', emoji: '🛡️' },
-    monk:      { name: 'Monk', emoji: '🧘' },
-    sorceress: { name: 'Sorceress', emoji: '⚡' },
-    druid:     { name: 'Druid', emoji: '🐻' },
-    huntress:  { name: 'Huntress', emoji: '🐆' },
-    shadow:    { name: 'Shadow', emoji: '👤' },
-    templar:   { name: 'Templar', emoji: '⛪' },
-    marauder:  { name: 'Marauder', emoji: '💪' },
-    duelist:   { name: 'Duelist', emoji: '🤺' },
+    witch:     { name: 'Witch',     emoji: '🧙‍♀️', color: '#3a0a6a', accent: '#b060ff',
+                 portrait: '' },
+    ranger:    { name: 'Ranger',    emoji: '🏹',    color: '#0a3a1a', accent: '#40c070',
+                 portrait: '' },
+    mercenary: { name: 'Mercenary', emoji: '🎯',    color: '#3a1a0a', accent: '#c08040',
+                 portrait: '' },
+    warrior:   { name: 'Warrior',   emoji: '🛡️',    color: '#3a0a0a', accent: '#c04040',
+                 portrait: '' },
+    monk:      { name: 'Monk',      emoji: '🧘',    color: '#0a1a3a', accent: '#4080c0',
+                 portrait: '' },
+    sorceress: { name: 'Sorceress', emoji: '⚡',    color: '#0a0a3a', accent: '#6060ff',
+                 portrait: '' },
+    druid:     { name: 'Druid',     emoji: '🐻',    color: '#1a3a0a', accent: '#80c040',
+                 portrait: '' },
+    huntress:  { name: 'Huntress',  emoji: '🐆',    color: '#2a1a0a', accent: '#c07020',
+                 portrait: '' },
+    shadow:    { name: 'Shadow',    emoji: '👤',    color: '#0a0a1a', accent: '#6060a0',
+                 portrait: '' },
+    templar:   { name: 'Templar',   emoji: '⛪',    color: '#2a1a00', accent: '#c0a000',
+                 portrait: '' },
+    marauder:  { name: 'Marauder',  emoji: '💪',    color: '#2a0000', accent: '#c02000',
+                 portrait: '' },
+    duelist:   { name: 'Duelist',   emoji: '🤺',    color: '#0a1a2a', accent: '#2080c0',
+                 portrait: '' },
   };
 
   // ============================================================
@@ -1306,8 +1318,9 @@
               
               <div class="poe2ph-class-grid">
                 ${Object.entries(CLASS_INFO).map(([key, value]) => `
-                  <button class="poe2ph-class-option" data-class="${key}" title="${t(`classes.${key}`)}">
-                    <span class="poe2ph-class-emoji">${value.emoji}</span>
+                  <button class="poe2ph-class-option" data-class="${key}" title="${t(`classes.${key}`)}" 
+                    style="--cls-color:${value.color};--cls-accent:${value.accent}">
+                    <span class="poe2ph-class-emoji-fb">${value.emoji}</span>
                     <span class="poe2ph-class-name">${t(`classes.${key}`)}</span>
                   </button>
                 `).join('')}
@@ -1319,6 +1332,7 @@
               </div>
             </div>
 
+            <div class="poe2ph-spend-summary poe2ph-hidden" id="poe2ph-spend-summary"></div>
             <div class="poe2ph-history-list" id="poe2ph-history-list"></div>
           </div>
 
@@ -1569,6 +1583,47 @@
         if (activeChar === 'none') return !p.characterId || p.characterId === 'none';
         return p.characterId === activeChar;
       });
+
+      // ── Spending summary ────────────────────────────────────
+      const summaryEl = this.shadow.getElementById('poe2ph-spend-summary');
+      if (summaryEl) {
+        const totals = {};
+        for (const p of filtered) {
+          if (p.price && p.price.amount > 0 && p.price.currency && p.price.currency !== 'unknown') {
+            totals[p.price.currency] = (totals[p.price.currency] || 0) + p.price.amount;
+          }
+        }
+        const entries = Object.entries(totals);
+        if (entries.length > 0) {
+          // Sort: premier currencies first, then by amount
+          const TIER = ['mirror','divine','exalted','chaos','regal','augmentation','transmutation',
+                        'alteration','annulment','vaal','alch','chance','blessed','scouring',
+                        'chromatic','fusing','jewellers','gemcutters','wisdom','gold'];
+          entries.sort((a, b) => {
+            const ai = TIER.indexOf(a[0]), bi = TIER.indexOf(b[0]);
+            if (ai !== -1 && bi !== -1) return ai - bi;
+            if (ai !== -1) return -1;
+            if (bi !== -1) return 1;
+            return b[1] - a[1];
+          });
+          const badges = entries.map(([currency, amount]) => {
+            const display = CURRENCY_DISPLAY[currency] || currency;
+            const fmt = Number.isInteger(amount) ? amount : parseFloat(amount.toFixed(2));
+            const tier = ['mirror','divine','exalted'].includes(currency) ? 'gold'
+                       : currency === 'chaos' ? 'chaos' : 'normal';
+            return `<span class="poe2ph-spend-badge poe2ph-spend-badge-${tier}">${fmt} ${display}</span>`;
+          }).join('');
+          const label = activeChar === 'all' ? '📊 Total' : `📊 ${t('settings.version') === 'Version' ? 'Spent' : 'Gastado'}`;
+          summaryEl.innerHTML = `
+            <div class="poe2ph-spend-label">${label}</div>
+            <div class="poe2ph-spend-badges">${badges}</div>
+          `;
+          summaryEl.classList.remove('poe2ph-hidden');
+        } else {
+          summaryEl.classList.add('poe2ph-hidden');
+        }
+      }
+      // ────────────────────────────────────────────────────────
 
       if (!filtered.length) {
         list.innerHTML = `

@@ -448,9 +448,9 @@
 
 .poe2ph-class-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  max-height: 120px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  max-height: 280px;
   overflow-y: auto;
   padding-right: 4px;
   scrollbar-width: thin;
@@ -460,40 +460,74 @@
 .poe2ph-class-grid::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 2px; }
 
 .poe2ph-class-option {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-dim);
-  border-radius: 4px;
-  padding: 5px 2px;
+  background: var(--cls-color, var(--bg-secondary));
+  border: 1px solid color-mix(in srgb, var(--cls-accent, #c8a455) 35%, transparent);
+  border-radius: 6px;
+  padding: 0;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 3px;
+  justify-content: flex-end;
+  gap: 0;
   transition: all 0.18s;
-  color: var(--text-muted);
+  color: #ccc;
+  overflow: hidden;
+  position: relative;
+  min-height: 72px;
 }
 .poe2ph-class-option:hover {
-  border-color: var(--border-mid);
-  color: var(--text-secondary);
+  border-color: var(--cls-accent, var(--border-mid));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--cls-accent, #c8a455) 30%, transparent);
+  transform: translateY(-1px);
 }
 .poe2ph-class-option.poe2ph-active {
-  border-color: var(--gold-dark) !important;
-  background: rgba(200, 164, 85, 0.08) !important;
-  color: var(--gold-light) !important;
+  border-color: var(--cls-accent, var(--gold-dark)) !important;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--cls-accent, #c8a455) 50%, transparent) !important;
+  color: #fff !important;
 }
 
+.poe2ph-class-portrait {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  opacity: 0.85;
+}
+
+.poe2ph-class-emoji-fb {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 4px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* keep old .poe2ph-class-emoji in case referenced elsewhere */
 .poe2ph-class-emoji {
-  font-size: 15px;
+  font-size: 28px;
   line-height: 1;
 }
 
 .poe2ph-class-name {
-  font-size: 8.5px;
+  font-size: 9.5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  padding: 3px 6px 4px;
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(transparent, rgba(0,0,0,0.75) 40%);
+  position: relative;
+  z-index: 1;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #e8dbb0;
 }
 
 .poe2ph-char-form-actions {
@@ -504,6 +538,55 @@
 .poe2ph-char-form-actions .poe2ph-btn {
   padding: 5px 12px;
   font-size: 10px;
+}
+
+/* ============================================================ */
+/*  SPEND SUMMARY BAR                                           */
+/* ============================================================ */
+
+.poe2ph-spend-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+}
+.poe2ph-spend-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.poe2ph-spend-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.poe2ph-spend-badge {
+  font-size: 10.5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-dim);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.poe2ph-spend-badge-gold {
+  border-color: rgba(200, 164, 85, 0.4);
+  background: rgba(200, 164, 85, 0.08);
+  color: var(--gold-light);
+  box-shadow: 0 0 4px rgba(200, 164, 85, 0.1);
+}
+.poe2ph-spend-badge-chaos {
+  border-color: rgba(200, 164, 85, 0.15);
+  color: var(--gold-mid);
+}
+.poe2ph-spend-badge-normal {
+  /* standard styling */
 }
 
 /* Card Badge */
