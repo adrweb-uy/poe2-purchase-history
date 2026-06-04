@@ -1138,11 +1138,8 @@
       }
       // Inline !important is the highest possible CSS priority — no site stylesheet
       // or inline style can override it, guaranteeing the transition always fires.
-      document.body.style.setProperty(
-        'transition',
-        'margin-right 0.4s ease, margin-left 0.4s ease',
-        'important'
-      );
+      // Start with NO body transition to avoid flashing on load.
+      document.body.style.setProperty('transition', 'none', 'important');
 
       this.shadow = this.host.attachShadow({ mode: 'open' });
 
@@ -1157,6 +1154,54 @@
       this.root.className = `poe2ph-container poe2ph-${this.settings.panelPosition}`;
       this.root.innerHTML = this._containerHTML();
       this.shadow.appendChild(this.root);
+
+      // ── Flash prevention ──────────────────────────────────────
+      // The CSS <link> loads asynchronously. Before it loads the panel has no
+      // transform and is fully visible on screen. When the stylesheet arrives and
+      // applies `transform: translateX(100%)`, the browser runs the CSS transition
+      // and animates the panel sliding out — the visible flash.
+      //
+      // Fix: set inline styles immediately to hide the panel with no transition
+      // (inline styles win over any stylesheet, even before CSS is parsed).
+      // Once the stylesheet is ready, a double rAF ensures the browser paints one
+      // clean hidden frame before transitions are re-enabled.
+      const panelEl  = this.root.querySelector('#poe2ph-panel');
+      const toggleEl = this.root.querySelector('#poe2ph-toggle');
+      const hiddenTransform = pos === 'left' ? 'translateX(-100%)' : 'translateX(100%)';
+
+      if (panelEl) {
+        panelEl.style.transition = 'none';
+        panelEl.style.transform  = hiddenTransform;
+      }
+      if (toggleEl) {
+        toggleEl.style.transition = 'none';
+      }
+
+      let transitionsRestored = false;
+      const restoreTransitions = () => {
+        if (transitionsRestored) return;
+        transitionsRestored = true;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (panelEl) {
+              panelEl.style.transition = '';
+              panelEl.style.transform  = '';
+            }
+            if (toggleEl) {
+              toggleEl.style.transition = '';
+            }
+            document.body.style.setProperty(
+              'transition',
+              'margin-right 0.4s ease, margin-left 0.4s ease',
+              'important'
+            );
+          });
+        });
+      };
+
+      cssLink.addEventListener('load', restoreTransitions);
+      // Safety fallback in case 'load' never fires (e.g. cached resource)
+      setTimeout(restoreTransitions, 400);
     }
 
     // ----------------------------------------------------------
