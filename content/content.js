@@ -1290,6 +1290,7 @@
           <!-- Tab: History -->
           <div class="poe2ph-tab-content poe2ph-tab-active" id="tab-history">
             <!-- Character selector bar -->
+            <div class="poe2ph-char-bar">
               <div class="poe2ph-char-selector">
                 <span class="poe2ph-char-label">${t('charBar.label')}</span>
                 <select class="poe2ph-char-select" id="poe2ph-char-select">
