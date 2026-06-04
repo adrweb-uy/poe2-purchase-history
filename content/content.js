@@ -188,9 +188,9 @@
         titleNew: 'Crear Nuevo Personaje',
       },
       classes: {
-        witch: 'Bruja', ranger: 'Cazadora', mercenary: 'Mercenario',
+        witch: 'Bruja', ranger: 'Exploradora', mercenary: 'Mercenario',
         warrior: 'Guerrero', monk: 'Monje', sorceress: 'Hechicera',
-        druid: 'Druida', huntress: 'Cazadora de Lanzas', shadow: 'Sombra',
+        druid: 'Druida', huntress: 'Cazadora', shadow: 'Sombra',
         templar: 'Templario', marauder: 'Karui', duelist: 'Duelista',
       },
       history: {
@@ -1290,18 +1290,25 @@
           <!-- Tab: History -->
           <div class="poe2ph-tab-content poe2ph-tab-active" id="tab-history">
             <!-- Character selector bar -->
-            <div class="poe2ph-char-bar">
               <div class="poe2ph-char-selector">
                 <span class="poe2ph-char-label">${t('charBar.label')}</span>
-                <select class="poe2ph-char-select" id="poe2ph-char-select">
-                  <option value="all" ${this.settings.activeCharacterId === 'all' ? 'selected' : ''}>${t('charBar.all')}</option>
-                  ${this.characters.map(c => `
-                    <option value="${c.id}" ${this.settings.activeCharacterId === c.id ? 'selected' : ''}>
-                      ${CLASS_INFO[c.class]?.emoji || '👤'} ${c.name}
-                    </option>
-                  `).join('')}
-                  <option value="none" ${this.settings.activeCharacterId === 'none' ? 'selected' : ''}>${t('charBar.none')}</option>
-                </select>
+                <div class="poe2ph-char-select-wrapper">
+                  <img class="poe2ph-char-active-portrait poe2ph-hidden" id="poe2ph-char-active-portrait" src="" alt="">
+                  <select class="poe2ph-char-select" id="poe2ph-char-select">
+                    <option value="all" ${this.settings.activeCharacterId === 'all' ? 'selected' : ''}>${t('charBar.all')}</option>
+                    ${this.characters.map(c => `
+                      <option value="${c.id}" ${this.settings.activeCharacterId === c.id ? 'selected' : ''}>
+                        ${CLASS_INFO[c.class]?.emoji || '👤'} ${c.name}
+                      </option>
+                    `).join('')}
+                    <option value="none" ${this.settings.activeCharacterId === 'none' ? 'selected' : ''}>${t('charBar.none')}</option>
+                  </select>
+                </div>
+                <button class="poe2ph-char-delete-btn poe2ph-hidden" id="poe2ph-char-delete-btn" title="Delete Character">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2m-6 5v6m4-6v6"/>
+                  </svg>
+                </button>
               </div>
               <button class="poe2ph-char-add-btn" id="poe2ph-char-add-btn" title="${t('charBar.newBtn')}">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
@@ -1438,6 +1445,30 @@
       `;
     }
 
+    _updateCharSelectorUI() {
+      const $ = id => this.shadow.getElementById(id);
+      const portrait = $('poe2ph-char-active-portrait');
+      const delBtn = $('poe2ph-char-delete-btn');
+      if (!portrait || !delBtn) return;
+
+      const act = this.settings.activeCharacterId;
+      const charObj = this.characters.find(c => c.id === act);
+
+      if (charObj) {
+        const cInfo = CLASS_INFO[charObj.class] || null;
+        if (cInfo && cInfo.portrait) {
+          portrait.src = chrome.runtime.getURL(cInfo.portrait);
+          portrait.classList.remove('poe2ph-hidden');
+        } else {
+          portrait.classList.add('poe2ph-hidden');
+        }
+        delBtn.classList.remove('poe2ph-hidden');
+      } else {
+        portrait.classList.add('poe2ph-hidden');
+        delBtn.classList.add('poe2ph-hidden');
+      }
+    }
+
     // ----------------------------------------------------------
     //  Event Listeners
     // ----------------------------------------------------------
@@ -1456,6 +1487,7 @@
 
       this._attachSettingsListeners();
       this._attachCharacterListeners();
+      this._updateCharSelectorUI();
     }
 
     _attachSettingsListeners() {
@@ -1616,9 +1648,32 @@
                        : currency === 'chaos' ? 'chaos' : 'normal';
             return `<span class="poe2ph-spend-badge poe2ph-spend-badge-${tier}">${fmt} ${display}</span>`;
           }).join('');
-          const label = activeChar === 'all' ? '📊 Total' : `📊 ${t('settings.version') === 'Version' ? 'Spent' : 'Gastado'}`;
+          let labelHTML = '';
+          if (activeChar === 'all') {
+            labelHTML = `<div class="poe2ph-spend-label">📊 Total</div>`;
+          } else {
+            const charObj = this.characters.find(c => c.id === activeChar);
+            const spentText = t('settings.version') === 'Version' ? 'Spent' : 'Gastado';
+            if (charObj) {
+              const cInfo = CLASS_INFO[charObj.className] || null;
+              if (cInfo && cInfo.portrait) {
+                labelHTML = `
+                  <div class="poe2ph-spend-char">
+                    <img class="poe2ph-spend-char-img" src="${chrome.runtime.getURL(cInfo.portrait)}" alt="">
+                    <span class="poe2ph-spend-char-name">${charObj.name}</span>
+                    <span class="poe2ph-spend-char-spent">– ${spentText}</span>
+                  </div>
+                `;
+              } else {
+                labelHTML = `<div class="poe2ph-spend-label">${charObj.name} – ${spentText}</div>`;
+              }
+            } else {
+              labelHTML = `<div class="poe2ph-spend-label">📊 ${spentText}</div>`;
+            }
+          }
+
           summaryEl.innerHTML = `
-            <div class="poe2ph-spend-label">${label}</div>
+            ${labelHTML}
             <div class="poe2ph-spend-badges">${badges}</div>
           `;
           summaryEl.classList.remove('poe2ph-hidden');
@@ -1929,6 +1984,43 @@
     //  Actions
     // ----------------------------------------------------------
 
+    async _deleteCharacter(id) {
+      const charObj = this.characters.find(c => c.id === id);
+      if (!charObj) return;
+      const msg = _lang === 'es' ? `¿Seguro que quieres borrar a ${charObj.name}? Sus items quedarán "Sin Personaje".` : `Are you sure you want to delete ${charObj.name}? Their items will become "No Character".`;
+      if (!confirm(msg)) return;
+
+      this.characters = this.characters.filter(c => c.id !== id);
+      await Storage.setCharacters(this.characters);
+
+      const allPurchases = await Storage.getPurchases();
+      let changed = false;
+      allPurchases.forEach(p => {
+        if (p.characterId === id) {
+          p.characterId = 'none';
+          changed = true;
+        }
+      });
+      if (changed) {
+        await Storage.setPurchases(allPurchases);
+        this.purchases.forEach(p => {
+          if (p.characterId === id) p.characterId = 'none';
+        });
+      }
+
+      this.settings.activeCharacterId = 'all';
+      await Storage.saveSettings(this.settings);
+
+      const wasOpen = this.isOpen;
+      this.root.innerHTML = this._containerHTML();
+      this._attachListeners();
+      this._renderHistory();
+      if (wasOpen) {
+        this.shadow.getElementById('poe2ph-panel')?.classList.add('poe2ph-panel-open');
+        this.shadow.getElementById('poe2ph-toggle')?.classList.add('poe2ph-toggle-open');
+      }
+    }
+
     async _deletePurchase(id) {
       await Storage.deletePurchase(id);
       const purchase = this.purchases.find(p => p.id === id);
@@ -2136,7 +2228,18 @@
         select.addEventListener('change', () => {
           this.settings.activeCharacterId = select.value;
           Storage.saveSettings(this.settings).catch(console.error);
+          this._updateCharSelectorUI();
           this._renderHistory();
+        });
+      }
+
+      // Delete character
+      const delBtn = $('poe2ph-char-delete-btn');
+      if (delBtn) {
+        delBtn.addEventListener('click', () => {
+          if (this.settings.activeCharacterId && this.settings.activeCharacterId !== 'all' && this.settings.activeCharacterId !== 'none') {
+            this._deleteCharacter(this.settings.activeCharacterId);
+          }
         });
       }
 
