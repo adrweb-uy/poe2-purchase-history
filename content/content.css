@@ -338,7 +338,7 @@
 .poe2ph-char-bar {
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-dim);
-  padding: 4px 14px;
+  padding: 10px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
