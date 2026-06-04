@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "POE2 Purchase History",
   "short_name": "POE2 History",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Track your Path of Exile 2 purchase history directly from the trade site.",
   "permissions": [
     "storage",

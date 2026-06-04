@@ -15,7 +15,7 @@
   //  CONSTANTS
   // ============================================================
 
-  const CURRENT_VERSION = '0.1.2';
+  const CURRENT_VERSION = '0.1.3';
 
   /** "Travel to Hideout" button text in all supported languages */
   const TRAVEL_TEXTS = new Set([
@@ -878,7 +878,7 @@
         if (s.includes('gemcutter')     || s === 'gcp')  return 'gemcutters';
         if (s.includes('scouring')      || s === 'scour') return 'scouring';
         if (s.includes('chromatic')     || s === 'chrom') return 'chromatic';
-        if (s.includes('annulment')     || s === 'annul') return 'annulment';
+        if (s.includes('annulment') || s.includes('annul')) return 'annulment';
         if (s.includes('vaal'))          return 'vaal';
         if (s.includes('ancient'))       return 'ancient';
         if (s.includes('lesser'))        return 'lesser';
@@ -919,7 +919,7 @@
 
       // 2. Fallback: match shorthand text like "1 aug", "2 chaos", "1 divine"
       const txt = row.innerText || '';
-      const shorthand = txt.match(/(\d+(?:[.,]\d+)?)\s*(divine|exalted|chaos|mirror|vaal|regal|blessed|scouring|chromatic|annulment|ancient|lesser|greater|perfect|augmentation|aug|transmutation|trans|alteration|alt|fusing|alch|chance|wisdom|wis|jeweller(?:'?s)?|gemcutter(?:'?s)?|gcp|gold)/i);
+      const shorthand = txt.match(/(\d+(?:[.,]\d+)?)\s*(divine|exalted|chaos|mirror|vaal|regal|blessed|scouring|scour|chromatic|chrom|annulment|annul|ancient|lesser|greater|perfect|augmentation|aug|transmutation|trans|alteration|alt|fusing|alch|chance|wisdom|wis|jeweller(?:'?s)?|gemcutter(?:'?s)?|gcp|gold)/i);
       if (shorthand) {
         const mapped = _mapCurrency(shorthand[2]);
         if (mapped) return { amount: parseFloat(shorthand[1].replace(',', '.')), currency: mapped };
