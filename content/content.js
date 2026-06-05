@@ -17,16 +17,38 @@
 
   const CURRENT_VERSION = '1.1.5';
 
-  /** "Travel to Hideout" button text in all supported languages */
+  /** "Travel to Hideout" button text in all supported languages.
+   *  Includes both the trade-site labels AND the in-game button text,
+   *  which sometimes differ across localized subdomains. */
   const TRAVEL_TEXTS = new Set([
-    'Travel to Hideout',       // EN
-    'Viajar al Escondite',     // ES
-    'Viajar para o Esconderijo', // PT
-    'Zum Versteck reisen',     // DE
-    'Voyager vers la Cachette', // FR
-    'Перейти в убежище',       // RU
-    'ハイドアウトへ移動',         // JA
-    '은신처로 이동',              // KO
+    // English
+    'Travel to Hideout',
+    // Spanish (es.pathofexile.com)
+    'Viajar al Escondite',
+    'Viajar a la guarida',
+    'Ir al Escondite',
+    // Portuguese (br.pathofexile.com / pt.pathofexile.com)
+    'Viajar para o Esconderijo',
+    'Ir para o Esconderijo',
+    // German (de.pathofexile.com)
+    'Zum Versteck reisen',
+    'Zum Unterschlupf reisen',
+    // French (fr.pathofexile.com)
+    'Voyager vers la Cachette',
+    'Aller à la Cachette',
+    // Russian (ru.pathofexile.com)
+    'Перейти в убежище',
+    'Телепортироваться в убежище',
+    // Japanese (jp.pathofexile.com)
+    'ハイドアウトへ移動',
+    // Korean (kr.pathofexile.com)
+    '은신처로 이동',
+    // Thai (th.pathofexile.com)
+    'เดินทางไปยังที่ซ่อน',
+    // Traditional Chinese (tw.pathofexile.com)
+    '前往藏身處',
+    // Simplified Chinese (cn.pathofexile.com)
+    '前往据点',
   ]);
 
   const CATEGORY_ICONS = {
@@ -2250,20 +2272,48 @@
     // ----------------------------------------------------------
 
     _setupMutationObserver() {
+      // Normalize button text for comparison (trim + collapse whitespace)
+      const normalizeText = (str) => (str || '').replace(/\s+/g, ' ').trim();
+
+      // Keywords that appear in all language variants of "Travel to Hideout"
+      const TRAVEL_KEYWORDS = [
+        'hideout',       // EN
+        'escondite',     // ES (Viajar al Escondite)
+        'guarida',       // ES (Viajar a la guarida)
+        'esconderijo',   // PT
+        'versteck',      // DE
+        'unterschlupf',  // DE alt
+        'cachette',      // FR
+        '\u0443\u0431\u0435\u0436\u0438\u0449\u0435',       // RU (убежище)
+        '\u30cf\u30a4\u30c9\u30a2\u30a6\u30c8',     // JA (ハイドアウト)
+        '\uc740\uc2e0\ucc98',         // KO (은신처)
+        '\u0e17\u0e35\u0e48\u0e0b\u0e48\u0e2d\u0e19',       // TH
+        '\u85cf\u8eab',           // ZH-TW (藏身)
+        '\u636e\u70b9',           // ZH-CN (据点)
+      ];
+
+      const isTravelButton = (el) => {
+        const txt = normalizeText(el.textContent);
+        if (!txt) return false;
+        // 1. Exact match against known strings
+        if (TRAVEL_TEXTS.has(txt)) return true;
+        // 2. Partial keyword match (case-insensitive) as fallback for new variants
+        const lower = txt.toLowerCase();
+        return TRAVEL_KEYWORDS.some(kw => lower.includes(kw.toLowerCase()));
+      };
+
       const watchNode = node => {
         if (node.nodeType !== Node.ELEMENT_NODE) return;
 
         // Check the node itself
-        const ownText = node.textContent?.trim() || '';
-        if (TRAVEL_TEXTS.has(ownText) && !node.__poe2ph) {
+        if (isTravelButton(node) && !node.__poe2ph) {
           this._trackButton(node);
         }
 
         // Check all descendants
         try {
           node.querySelectorAll('*').forEach(el => {
-            const txt = el.textContent?.trim() || '';
-            if (TRAVEL_TEXTS.has(txt) && !el.__poe2ph) {
+            if (isTravelButton(el) && !el.__poe2ph) {
               this._trackButton(el);
             }
           });

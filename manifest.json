@@ -9,14 +9,14 @@
     "activeTab"
   ],
   "host_permissions": [
-    "*://www.pathofexile.com/trade2*",
-    "*://www.pathofexile.com/trade2/*"
+    "*://*.pathofexile.com/trade2*",
+    "*://*.pathofexile.com/trade2/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "*://www.pathofexile.com/trade2*",
-        "*://www.pathofexile.com/trade2/*"
+        "*://*.pathofexile.com/trade2*",
+        "*://*.pathofexile.com/trade2/*"
       ],
       "js": ["content/content.js"],
       "css": [],
@@ -50,7 +50,7 @@
         "popup/flags/*.png"
       ],
       "matches": [
-        "*://www.pathofexile.com/*"
+        "*://*.pathofexile.com/*"
       ]
     }
   ]
