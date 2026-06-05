@@ -15,7 +15,7 @@
   //  CONSTANTS
   // ============================================================
 
-  const CURRENT_VERSION = '0.1.5';
+  const CURRENT_VERSION = '1.1.5';
 
   /** "Travel to Hideout" button text in all supported languages */
   const TRAVEL_TEXTS = new Set([
@@ -1645,7 +1645,82 @@
           }
         }
         const entries = Object.entries(totals);
-        if (entries.length > 0) {
+        const spentText = t('settings.version') === 'Version' ? 'Spent' : 'Gastado';
+
+        // Always show character header when a specific character is selected
+        if (activeChar !== 'all' && activeChar !== 'none') {
+          const charObj = this.characters.find(c => c.id === activeChar);
+          if (charObj) {
+            const cInfo = CLASS_INFO[charObj.class] || null;
+
+            const delBtnHTML = `
+              <button class="poe2ph-char-delete-btn poe2ph-summary-delete-btn" data-id="${charObj.id}" title="Delete Character" style="align-self: center; height: 32px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2m-6 5v6m4-6v6"/>
+                </svg>
+              </button>
+            `;
+
+            // Build spending badges (may be empty)
+            let badgesHTML = '';
+            if (entries.length > 0) {
+              const TIER = ['mirror','divine','exalted','chaos','regal','augmentation','transmutation',
+                            'alteration','annulment','vaal','alch','chance','blessed','scouring',
+                            'chromatic','fusing','jewellers','gemcutters','wisdom','gold'];
+              entries.sort((a, b) => {
+                const ai = TIER.indexOf(a[0]), bi = TIER.indexOf(b[0]);
+                if (ai !== -1 && bi !== -1) return ai - bi;
+                if (ai !== -1) return -1;
+                if (bi !== -1) return 1;
+                return b[1] - a[1];
+              });
+              badgesHTML = entries.map(([currency, amount]) => {
+                const display = CURRENCY_DISPLAY[currency] || currency;
+                const fmt = Number.isInteger(amount) ? amount : parseFloat(amount.toFixed(2));
+                const tier = ['mirror','divine','exalted'].includes(currency) ? 'gold'
+                           : currency === 'chaos' ? 'chaos' : 'normal';
+                return `<span class="poe2ph-spend-badge poe2ph-spend-badge-${tier}">${fmt} ${display}</span>`;
+              }).join('');
+            }
+
+            if (cInfo && cInfo.portrait) {
+              summaryEl.innerHTML = `
+                <div class="poe2ph-card-main" style="padding:0; background:transparent; border:none; box-shadow:none;">
+                  <div class="poe2ph-card-img-container" style="width:48px; height:48px; border-radius:4px;">
+                    <img class="poe2ph-card-img" style="object-fit:cover; object-position:top;" src="${chrome.runtime.getURL(cInfo.portrait)}" alt="">
+                  </div>
+                  <div class="poe2ph-card-info" style="display:flex; flex-direction:column; gap:6px; justify-content:center;">
+                    <div style="display:flex; align-items:baseline; gap:6px;">
+                      <span class="poe2ph-card-name" style="font-size:15px; letter-spacing:0.5px;">${charObj.name}</span>
+                      ${badgesHTML ? `<span class="poe2ph-spend-label" style="font-size:10px;">– ${spentText}</span>` : ''}
+                    </div>
+                    ${badgesHTML ? `<div class="poe2ph-spend-badges" style="margin:0;">${badgesHTML}</div>` : ''}
+                  </div>
+                  ${delBtnHTML}
+                </div>
+              `;
+            } else {
+              const emoji = cInfo?.emoji || '👤';
+              summaryEl.innerHTML = `
+                <div class="poe2ph-spend-char-header">
+                  <div class="poe2ph-spend-label">${emoji} ${charObj.name}${badgesHTML ? ` – ${spentText}` : ''}</div>
+                  ${delBtnHTML}
+                </div>
+                ${badgesHTML ? `<div class="poe2ph-spend-badges">${badgesHTML}</div>` : ''}
+              `;
+            }
+
+            const sumDelBtn = summaryEl.querySelector('.poe2ph-summary-delete-btn');
+            if (sumDelBtn) {
+              sumDelBtn.addEventListener('click', () => {
+                this._deleteCharacter(sumDelBtn.dataset.id);
+              });
+            }
+            summaryEl.classList.remove('poe2ph-hidden');
+          } else {
+            summaryEl.classList.add('poe2ph-hidden');
+          }
+        } else if (activeChar === 'all' && entries.length > 0) {
           // Sort: premier currencies first, then by amount
           const TIER = ['mirror','divine','exalted','chaos','regal','augmentation','transmutation',
                         'alteration','annulment','vaal','alch','chance','blessed','scouring',
@@ -1664,64 +1739,10 @@
                        : currency === 'chaos' ? 'chaos' : 'normal';
             return `<span class="poe2ph-spend-badge poe2ph-spend-badge-${tier}">${fmt} ${display}</span>`;
           }).join('');
-          if (activeChar === 'all') {
-            summaryEl.innerHTML = `
-              <div class="poe2ph-spend-label" style="margin-bottom:8px;">📊 Total</div>
-              <div class="poe2ph-spend-badges">${badges}</div>
-            `;
-          } else {
-            const charObj = this.characters.find(c => c.id === activeChar);
-            const spentText = t('settings.version') === 'Version' ? 'Spent' : 'Gastado';
-            if (charObj) {
-              const cInfo = CLASS_INFO[charObj.class] || null;
-              
-              const delBtnHTML = `
-                <button class="poe2ph-char-delete-btn poe2ph-summary-delete-btn" data-id="${charObj.id}" title="Delete Character" style="align-self: center; height: 32px;">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2m-6 5v6m4-6v6"/>
-                  </svg>
-                </button>
-              `;
-
-              if (cInfo && cInfo.portrait) {
-                summaryEl.innerHTML = `
-                  <div class="poe2ph-card-main" style="padding:0; background:transparent; border:none; box-shadow:none;">
-                    <div class="poe2ph-card-img-container" style="width:48px; height:48px; border-radius:4px;">
-                      <img class="poe2ph-card-img" style="object-fit:cover; object-position:top;" src="${chrome.runtime.getURL(cInfo.portrait)}" alt="">
-                    </div>
-                    <div class="poe2ph-card-info" style="display:flex; flex-direction:column; gap:6px; justify-content:center;">
-                      <div style="display:flex; align-items:baseline; gap:6px;">
-                        <span class="poe2ph-card-name" style="font-size:15px; letter-spacing:0.5px;">${charObj.name}</span>
-                        <span class="poe2ph-spend-label" style="font-size:10px;">– ${spentText}</span>
-                      </div>
-                      <div class="poe2ph-spend-badges" style="margin:0;">${badges}</div>
-                    </div>
-                    ${delBtnHTML}
-                  </div>
-                `;
-              } else {
-                summaryEl.innerHTML = `
-                  <div class="poe2ph-spend-char-header">
-                    <div class="poe2ph-spend-label">${charObj.name} – ${spentText}</div>
-                    ${delBtnHTML}
-                  </div>
-                  <div class="poe2ph-spend-badges">${badges}</div>
-                `;
-              }
-            } else {
-              summaryEl.innerHTML = `
-                <div class="poe2ph-spend-label" style="margin-bottom:8px;">📊 ${spentText}</div>
-                <div class="poe2ph-spend-badges">${badges}</div>
-              `;
-            }
-          }
-
-          const sumDelBtn = summaryEl.querySelector('.poe2ph-summary-delete-btn');
-          if (sumDelBtn) {
-            sumDelBtn.addEventListener('click', () => {
-              this._deleteCharacter(sumDelBtn.dataset.id);
-            });
-          }
+          summaryEl.innerHTML = `
+            <div class="poe2ph-spend-label" style="margin-bottom:8px;">📊 Total</div>
+            <div class="poe2ph-spend-badges">${badges}</div>
+          `;
           summaryEl.classList.remove('poe2ph-hidden');
         } else {
           summaryEl.classList.add('poe2ph-hidden');
