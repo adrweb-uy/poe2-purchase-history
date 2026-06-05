@@ -9,14 +9,12 @@
     "activeTab"
   ],
   "host_permissions": [
-    "*://*.pathofexile.com/trade2*",
-    "*://*.pathofexile.com/trade2/*"
+    "*://*.pathofexile.com/trade2*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "*://*.pathofexile.com/trade2*",
-        "*://*.pathofexile.com/trade2/*"
+        "*://*.pathofexile.com/trade2*"
       ],
       "js": ["content/content.js"],
       "css": [],
