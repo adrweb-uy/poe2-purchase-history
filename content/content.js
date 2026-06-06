@@ -15,7 +15,7 @@
   //  CONSTANTS
   // ============================================================
 
-  const CURRENT_VERSION = '1.1.5';
+  const CURRENT_VERSION = '1.1.6';
 
   /** "Travel to Hideout" button text in all supported languages.
    *  Includes both the trade-site labels AND the in-game button text,
@@ -2293,11 +2293,20 @@
       ];
 
       const isTravelButton = (el) => {
+        // Must be an actual button element (or role="button") to avoid false positives
+        // from sort/filter icons or other containers that might contain travel-related text.
+        const isButtonEl = el.tagName === 'BUTTON' || el.getAttribute('role') === 'button';
+        if (!isButtonEl) return false;
+
+        // The PoE trade site always uses the class "direct-btn" on the Travel to Hideout button.
+        // Requiring this class prevents any other button (e.g. sort arrows) from triggering a save.
+        if (!el.classList.contains('direct-btn')) return false;
+
         const txt = normalizeText(el.textContent);
         if (!txt) return false;
         // 1. Exact match against known strings
         if (TRAVEL_TEXTS.has(txt)) return true;
-        // 2. Partial keyword match (case-insensitive) as fallback for new variants
+        // 2. Partial keyword match (case-insensitive) as fallback for new language variants
         const lower = txt.toLowerCase();
         return TRAVEL_KEYWORDS.some(kw => lower.includes(kw.toLowerCase()));
       };
