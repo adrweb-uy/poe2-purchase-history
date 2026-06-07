@@ -5,8 +5,7 @@
   "version": "1.1.6",
   "description": "Track your Path of Exile 2 purchase history directly from the trade site.",
   "permissions": [
-    "storage",
-    "activeTab"
+    "storage"
   ],
   "host_permissions": [
     "*://*.pathofexile.com/trade2*"
