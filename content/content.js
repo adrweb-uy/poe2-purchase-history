@@ -15,7 +15,7 @@
   //  CONSTANTS
   // ============================================================
 
-  const CURRENT_VERSION = '1.1.6';
+  const CURRENT_VERSION = '1.1.7';
 
   /** "Travel to Hideout" button text in all supported languages.
    *  Includes both the trade-site labels AND the in-game button text,
