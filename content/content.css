@@ -836,7 +836,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, color 0.15s;
   flex-shrink: 0;
   opacity: 0;
   transition: opacity 0.2s, background 0.15s, color 0.15s;
@@ -845,6 +844,42 @@
 .poe2ph-delete-btn:hover {
   background: var(--red-bg);
   color: var(--red);
+}
+
+/* ===== FAVORITE STAR BUTTON ===== */
+.poe2ph-fav-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.2s, color 0.15s, background 0.15s;
+}
+/* Show on hover (unfavorited) */
+.poe2ph-card:hover .poe2ph-fav-btn { opacity: 1; }
+.poe2ph-fav-btn:hover {
+  background: rgba(200, 164, 85, 0.10);
+  color: var(--gold-mid);
+}
+/* Always visible when favorited */
+.poe2ph-fav-btn.poe2ph-fav-active {
+  opacity: 1 !important;
+  color: var(--gold-light);
+  filter: drop-shadow(0 0 4px rgba(200, 164, 85, 0.5));
+}
+.poe2ph-fav-btn.poe2ph-fav-active:hover {
+  color: var(--gold-bright);
+  background: rgba(200, 164, 85, 0.12);
+}
+/* Subtle gold left border on favorited cards */
+.poe2ph-card:has(.poe2ph-fav-active) {
+  border-left: 2px solid var(--gold-deep);
 }
 
 /* ===== CARD ACTIONS & EXPAND BUTTON ===== */

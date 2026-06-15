@@ -819,6 +819,12 @@
       const p = list.find(x => x.id === id);
       if (p) { p.notes = note; await this.setPurchases(list); }
     },
+    async toggleFavorite(id) {
+      const list = await this.getPurchases();
+      const p = list.find(x => x.id === id);
+      if (p) { p.favorite = !p.favorite; await this.setPurchases(list); return p.favorite; }
+      return false;
+    },
     async clearPurchases() { await this.setPurchases([]); },
   };
 
@@ -1782,7 +1788,12 @@
         return;
       }
 
-      list.innerHTML = filtered.map(p => this._cardHTML(p)).join('');
+      // Sort: favorites first (both groups maintain date order as already in the array)
+      const favorites    = filtered.filter(p => p.favorite);
+      const nonFavorites = filtered.filter(p => !p.favorite);
+      const sorted = [...favorites, ...nonFavorites];
+
+      list.innerHTML = sorted.map(p => this._cardHTML(p)).join('');
 
       // Attach card listeners
       list.querySelectorAll('.poe2ph-card').forEach(card => {
@@ -1806,6 +1817,20 @@
         btn.addEventListener('click', e => {
           e.stopPropagation();
           window.open(btn.dataset.url, '_blank');
+        });
+      });
+
+      // Favorite star buttons
+      list.querySelectorAll('.poe2ph-fav-btn').forEach(btn => {
+        btn.addEventListener('click', async e => {
+          e.stopPropagation();
+          const id = btn.dataset.id;
+          const isFav = await Storage.toggleFavorite(id);
+          // Update in-memory
+          const purchase = this.purchases.find(x => x.id === id);
+          if (purchase) purchase.favorite = isFav;
+          // Re-render to reorder list
+          this._renderHistory();
         });
       });
 
@@ -1871,6 +1896,11 @@
               <button class="poe2ph-expand-btn" title="Expand/Collapse">
                 <svg class="poe2ph-expand-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </button>
+              <button class="poe2ph-fav-btn${p.favorite ? ' poe2ph-fav-active' : ''}" data-id="${p.id}" title="Favorite">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="${p.favorite ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                 </svg>
               </button>
               <button class="poe2ph-delete-btn" data-id="${p.id}" title="${t('history.delete')}">
