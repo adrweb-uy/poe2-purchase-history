@@ -858,11 +858,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  opacity: 0;
-  transition: opacity 0.2s, color 0.15s, background 0.15s;
+  transition: color 0.15s, background 0.15s;
 }
-/* Show on hover (unfavorited) */
-.poe2ph-card:hover .poe2ph-fav-btn { opacity: 1; }
 .poe2ph-fav-btn:hover {
   background: rgba(200, 164, 85, 0.10);
   color: var(--gold-mid);
