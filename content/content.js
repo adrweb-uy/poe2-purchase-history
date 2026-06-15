@@ -1814,7 +1814,6 @@
         html += `<div class="poe2ph-section-header">
           <span class="poe2ph-section-icon">⭐</span>
           <span class="poe2ph-section-title">${t('history.sectionFavorites')}</span>
-          <span class="poe2ph-section-hint">${t('history.dragHint') || ''}</span>
         </div>`;
         html += favorites.map(p => this._cardHTML(p)).join('');
       }
@@ -1903,10 +1902,13 @@
     // ----------------------------------------------------------
 
     _setupFavoriteDragDrop(list, favorites) {
-      // Only cards belonging to favorite items are draggable
       const favIds = new Set(favorites.map(p => p.id));
       let dragSrcId = null;
       let dragOverCard = null;
+
+      // CRITICAL: The list-level dragover must call preventDefault so that
+      // drop events fire even when the cursor is over a child of a card.
+      list.addEventListener('dragover', e => { e.preventDefault(); });
 
       list.querySelectorAll('.poe2ph-card').forEach(card => {
         if (!favIds.has(card.dataset.id)) return;
@@ -1914,11 +1916,16 @@
         card.setAttribute('draggable', 'true');
         card.classList.add('poe2ph-draggable');
 
+        // Disable drag on images so the browser doesn't start an image drag
+        card.querySelectorAll('img').forEach(img => img.setAttribute('draggable', 'false'));
+
         card.addEventListener('dragstart', e => {
           dragSrcId = card.dataset.id;
-          card.classList.add('poe2ph-dragging');
+          // Store in dataTransfer as a fallback
           e.dataTransfer.effectAllowed = 'move';
           e.dataTransfer.setData('text/plain', dragSrcId);
+          // Delay adding the class so the ghost image looks normal
+          requestAnimationFrame(() => card.classList.add('poe2ph-dragging'));
         });
 
         card.addEventListener('dragend', () => {
@@ -1928,42 +1935,49 @@
           dragOverCard = null;
         });
 
-        card.addEventListener('dragover', e => {
-          if (!dragSrcId || card.dataset.id === dragSrcId) return;
+        // dragenter is more reliable than dragover for the highlight in Shadow DOM
+        // because it fires once per element entry instead of continuously
+        card.addEventListener('dragenter', e => {
+          e.preventDefault(); // needed in some browsers
+          const srcId = dragSrcId;
+          if (!srcId || card.dataset.id === srcId) return;
           if (!favIds.has(card.dataset.id)) return;
-          e.preventDefault();
-          e.dataTransfer.dropEffect = 'move';
-          if (dragOverCard !== card) {
-            if (dragOverCard) dragOverCard.classList.remove('poe2ph-drag-over');
-            dragOverCard = card;
-            card.classList.add('poe2ph-drag-over');
+          if (dragOverCard && dragOverCard !== card) {
+            dragOverCard.classList.remove('poe2ph-drag-over');
           }
+          dragOverCard = card;
+          card.classList.add('poe2ph-drag-over');
         });
 
-        card.addEventListener('dragleave', e => {
-          if (!card.contains(e.relatedTarget)) {
-            card.classList.remove('poe2ph-drag-over');
-            if (dragOverCard === card) dragOverCard = null;
-          }
+        // dragover must also call preventDefault to allow the drop
+        card.addEventListener('dragover', e => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
         });
 
         card.addEventListener('drop', async e => {
           e.preventDefault();
           e.stopPropagation();
+          // Read srcId from both closure and dataTransfer (fallback for Shadow DOM edge cases)
+          const srcId = dragSrcId || e.dataTransfer.getData('text/plain');
           const targetId = card.dataset.id;
-          if (!dragSrcId || dragSrcId === targetId) return;
+
+          // Clean up visual state immediately (before async work)
+          card.classList.remove('poe2ph-drag-over');
+          list.querySelectorAll('.poe2ph-drag-over').forEach(el => el.classList.remove('poe2ph-drag-over'));
+          dragSrcId = null;
+          dragOverCard = null;
+
+          if (!srcId || srcId === targetId) return;
           if (!favIds.has(targetId)) return;
 
-          // Reorder in this.purchases: move dragSrc before target (within favorites)
+          // Read fresh from storage, reorder, and save
           const allPurchases = await Storage.getPurchases();
-
-          const srcIdx = allPurchases.findIndex(p => p.id === dragSrcId);
-          const tgtIdx = allPurchases.findIndex(p => p.id === targetId);
-          if (srcIdx === -1 || tgtIdx === -1) return;
-
-          // Remove src and re-insert before target
+          const srcIdx = allPurchases.findIndex(p => p.id === srcId);
+          if (srcIdx === -1) return;
           const [srcItem] = allPurchases.splice(srcIdx, 1);
           const newTgtIdx = allPurchases.findIndex(p => p.id === targetId);
+          if (newTgtIdx === -1) { allPurchases.splice(srcIdx, 0, srcItem); return; }
           allPurchases.splice(newTgtIdx, 0, srcItem);
 
           await Storage.setPurchases(allPurchases);

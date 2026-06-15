@@ -23,7 +23,9 @@ Una extensión de Chrome que inyecta un elegante panel lateral en la [página de
 
 ### ⭐ Favoritos
 - Marcá cualquier compra como favorita con el botón estrella en la carta.
-- Los favoritos aparecen siempre al inicio del historial, ordenados por fecha entre ellos.
+- Los favoritos aparecen al inicio del historial bajo el título **"Favoritos"**, separados del resto por un título **"Items"**.
+- Los títulos de sección solo aparecen cuando hay al menos un favorito marcado.
+- **Drag & Drop:** Arrastrá las cartas favoritas para reordenarlas libremente — el orden se guarda de forma permanente.
 - La estrella es siempre visible y se ilumina en dorado cuando el ítem está marcado como favorito.
 
 ### ⚙️ Ajustes
@@ -58,6 +60,7 @@ Una extensión de Chrome que inyecta un elegante panel lateral en la [página de
 2. Cuando encuentres algo que quieras, haz clic en **"Travel to Hideout"** — la compra se registra automáticamente.
 3. Abre el panel lateral (el ícono del cofre en el borde de la pantalla) para revisar tu historial.
 4. Haz clic en cualquier carta para expandirla y ver los detalles completos, agregar una nota o reasignarla a un personaje.
+5. Para reordenar favoritos, simplemente **arrastrá una carta favorita** sobre otra.
 
 ---
 
@@ -69,6 +72,11 @@ Inglés · Español · Portugués · Alemán · Francés · Ruso · Japonés · 
 ---
 
 ## 📄 Historial de Cambios (Changelog)
+
+### v1.1.9 — 2026-06-15
+- **Novedad:** Títulos de sección en el historial — cuando hay favoritos, aparece el encabezado **"Favoritos"** arriba de ellos y **"Items"** antes de los ítems normales. Los títulos no se muestran si no hay ningún favorito marcado.
+- **Novedad:** **Drag & Drop para Favoritos** — arrastrá y soltá las cartas favoritas para reordenarlas libremente. El nuevo orden se guarda permanentemente. Solo los favoritos son arrastrables entre sí.
+- **Versión:** Actualizada a `1.1.9`.
 
 ### v1.1.8 — 2026-06-15
 - **Novedad:** Sistema de **Favoritos** — marcá cualquier compra con una estrella para fijarla al inicio del historial. Los favoritos se muestran primero (ordenados por fecha entre ellos), seguidos del resto. La estrella es siempre visible en cada carta y se ilumina en dorado cuando el ítem está marcado.
@@ -167,7 +175,9 @@ A Chrome extension that injects a sleek side panel into the [Path of Exile 2 tra
 
 ### ⭐ Favorites
 - Mark any purchase as a favourite with the star button on the card.
-- Favourites always appear at the top of the history list, sorted by date among themselves.
+- Favourites appear at the top of the history list under a **"Favorites"** heading, separated from the rest by an **"Items"** heading.
+- Section headings are only shown when at least one favourite is marked.
+- **Drag & Drop:** Drag favourite cards to freely reorder them — the order is saved permanently.
 - The star is always visible and lights up in gold when the item is marked as a favourite.
 
 ### ⚙️ Settings
@@ -202,6 +212,7 @@ A Chrome extension that injects a sleek side panel into the [Path of Exile 2 tra
 2. When you find something you want, click **"Travel to Hideout"** — the purchase is recorded automatically.
 3. Open the side panel (the chest icon on the screen edge) to review your history.
 4. Click any card to expand it and see full details, add a note, or reassign it to a character.
+5. To reorder favourites, simply **drag a favourite card** onto another one.
 
 ---
 
@@ -213,6 +224,11 @@ English · Español · Português · Deutsch · Français · Русский · �
 ---
 
 ## 📄 Changelog (EN)
+
+### v1.1.9 — 2026-06-15
+- **Feature:** Section headings in the history list — when favourites exist, a **"Favorites"** heading appears above them and an **"Items"** heading separates them from normal purchases. Headings are hidden when no favourites are marked.
+- **Feature:** **Drag & Drop for Favorites** — drag and drop favourite cards to reorder them freely. The new order is saved permanently to extension storage. Only favourites are draggable among themselves; normal items are unaffected.
+- **Version:** Bumped to `1.1.9`.
 
 ### v1.1.8 — 2026-06-15
 - **Feature:** **Favorites system** — mark any purchase with a star to pin it to the top of the history list. Favourites appear first (sorted by date among themselves), followed by the rest. The star is always visible on every card and lights up in gold when the item is marked as a favourite.
