@@ -15,7 +15,7 @@
   //  CONSTANTS
   // ============================================================
 
-  const CURRENT_VERSION = '1.1.8';
+  const CURRENT_VERSION = '1.1.9';
 
   /** "Travel to Hideout" button text in all supported languages.
    *  Includes both the trade-site labels AND the in-game button text,
@@ -153,6 +153,8 @@
         openSearch: 'Open search',
         restore:   'Restore',
         deletePermanent: 'Delete permanently',
+        sectionFavorites: 'Favorites',
+        sectionItems: 'Items',
       },
       trash: {
         emptyBtn: 'Empty Trash',
@@ -230,6 +232,8 @@
         openSearch: 'Abrir búsqueda',
         restore:   'Restaurar',
         deletePermanent: 'Eliminar permanentemente',
+        sectionFavorites: 'Favoritos',
+        sectionItems: 'Items',
       },
       trash: {
         emptyBtn: 'Vaciar Papelera',
@@ -307,6 +311,8 @@
         openSearch: 'Abrir busca',
         restore:   'Restaurar',
         deletePermanent: 'Excluir permanentemente',
+        sectionFavorites: 'Favoritos',
+        sectionItems: 'Itens',
       },
       trash: {
         emptyBtn: 'Esvaziar Lixeira',
@@ -384,6 +390,8 @@
         openSearch: 'Suche öffnen',
         restore:   'Wiederherstellen',
         deletePermanent: 'Endgültig löschen',
+        sectionFavorites: 'Favoriten',
+        sectionItems: 'Elemente',
       },
       trash: {
         emptyBtn: 'Papierkorb leeren',
@@ -461,6 +469,8 @@
         openSearch: 'Ouvrir la recherche',
         restore:   'Restaurer',
         deletePermanent: 'Supprimer définitivement',
+        sectionFavorites: 'Favoris',
+        sectionItems: 'Objets',
       },
       trash: {
         emptyBtn: 'Vider la corbeille',
@@ -538,6 +548,8 @@
         openSearch: 'Открыть поиск',
         restore:   'Восстановить',
         deletePermanent: 'Удалить навсегда',
+        sectionFavorites: 'Избранное',
+        sectionItems: 'Предметы',
       },
       trash: {
         emptyBtn: 'Очистить корзину',
@@ -615,6 +627,8 @@
         openSearch: '検索を開く',
         restore:   '復元',
         deletePermanent: '完全に削除',
+        sectionFavorites: 'お気に入り',
+        sectionItems: 'アイテム',
       },
       trash: {
         emptyBtn: 'ゴミ箱を空にする',
@@ -692,6 +706,8 @@
         openSearch: '검색 열기',
         restore:   '복구',
         deletePermanent: '영구 삭제',
+        sectionFavorites: '즐겨찾기',
+        sectionItems: '아이템',
       },
       trash: {
         emptyBtn: '휴지통 비우기',
@@ -1791,9 +1807,25 @@
       // Sort: favorites first (both groups maintain date order as already in the array)
       const favorites    = filtered.filter(p => p.favorite);
       const nonFavorites = filtered.filter(p => !p.favorite);
-      const sorted = [...favorites, ...nonFavorites];
 
-      list.innerHTML = sorted.map(p => this._cardHTML(p)).join('');
+      // Build HTML with optional section headers
+      let html = '';
+      if (favorites.length > 0) {
+        html += `<div class="poe2ph-section-header">
+          <span class="poe2ph-section-icon">⭐</span>
+          <span class="poe2ph-section-title">${t('history.sectionFavorites')}</span>
+          <span class="poe2ph-section-hint">${t('history.dragHint') || ''}</span>
+        </div>`;
+        html += favorites.map(p => this._cardHTML(p)).join('');
+      }
+      if (nonFavorites.length > 0 && favorites.length > 0) {
+        html += `<div class="poe2ph-section-header poe2ph-section-header-items">
+          <span class="poe2ph-section-title">${t('history.sectionItems')}</span>
+        </div>`;
+      }
+      html += nonFavorites.map(p => this._cardHTML(p)).join('');
+
+      list.innerHTML = html;
 
       // Attach card listeners
       list.querySelectorAll('.poe2ph-card').forEach(card => {
@@ -1856,6 +1888,86 @@
           }
 
           // Re-render history to reflect changes
+          this._renderHistory();
+        });
+      });
+
+      // ── Drag & Drop reordering for favorites ─────────────────
+      if (favorites.length > 1) {
+        this._setupFavoriteDragDrop(list, favorites);
+      }
+    }
+
+    // ----------------------------------------------------------
+    //  Drag & Drop for Favorites
+    // ----------------------------------------------------------
+
+    _setupFavoriteDragDrop(list, favorites) {
+      // Only cards belonging to favorite items are draggable
+      const favIds = new Set(favorites.map(p => p.id));
+      let dragSrcId = null;
+      let dragOverCard = null;
+
+      list.querySelectorAll('.poe2ph-card').forEach(card => {
+        if (!favIds.has(card.dataset.id)) return;
+
+        card.setAttribute('draggable', 'true');
+        card.classList.add('poe2ph-draggable');
+
+        card.addEventListener('dragstart', e => {
+          dragSrcId = card.dataset.id;
+          card.classList.add('poe2ph-dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', dragSrcId);
+        });
+
+        card.addEventListener('dragend', () => {
+          card.classList.remove('poe2ph-dragging');
+          list.querySelectorAll('.poe2ph-drag-over').forEach(el => el.classList.remove('poe2ph-drag-over'));
+          dragSrcId = null;
+          dragOverCard = null;
+        });
+
+        card.addEventListener('dragover', e => {
+          if (!dragSrcId || card.dataset.id === dragSrcId) return;
+          if (!favIds.has(card.dataset.id)) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          if (dragOverCard !== card) {
+            if (dragOverCard) dragOverCard.classList.remove('poe2ph-drag-over');
+            dragOverCard = card;
+            card.classList.add('poe2ph-drag-over');
+          }
+        });
+
+        card.addEventListener('dragleave', e => {
+          if (!card.contains(e.relatedTarget)) {
+            card.classList.remove('poe2ph-drag-over');
+            if (dragOverCard === card) dragOverCard = null;
+          }
+        });
+
+        card.addEventListener('drop', async e => {
+          e.preventDefault();
+          e.stopPropagation();
+          const targetId = card.dataset.id;
+          if (!dragSrcId || dragSrcId === targetId) return;
+          if (!favIds.has(targetId)) return;
+
+          // Reorder in this.purchases: move dragSrc before target (within favorites)
+          const allPurchases = await Storage.getPurchases();
+
+          const srcIdx = allPurchases.findIndex(p => p.id === dragSrcId);
+          const tgtIdx = allPurchases.findIndex(p => p.id === targetId);
+          if (srcIdx === -1 || tgtIdx === -1) return;
+
+          // Remove src and re-insert before target
+          const [srcItem] = allPurchases.splice(srcIdx, 1);
+          const newTgtIdx = allPurchases.findIndex(p => p.id === targetId);
+          allPurchases.splice(newTgtIdx, 0, srcItem);
+
+          await Storage.setPurchases(allPurchases);
+          this.purchases = allPurchases;
           this._renderHistory();
         });
       });

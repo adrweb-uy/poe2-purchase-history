@@ -638,7 +638,7 @@
   color: var(--gold-mid);
 }
 .poe2ph-spend-badge-normal {
-  /* standard styling */
+  /* inherits base .poe2ph-spend-badge styles */
 }
 
 /* Card Badge */
@@ -1353,6 +1353,71 @@
 
 /* ===== UTILITY ===== */
 .poe2ph-hidden { display: none !important; }
+
+/* ===== SECTION HEADERS (Favorites / Items) ===== */
+.poe2ph-section-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px 4px;
+  margin-top: 4px;
+}
+
+.poe2ph-section-icon {
+  font-size: 11px;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.poe2ph-section-title {
+  font-family: "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.poe2ph-section-hint {
+  font-size: 9px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.poe2ph-section-header-items {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-dim);
+}
+
+.poe2ph-section-header-items .poe2ph-section-title {
+  color: var(--text-muted);
+}
+
+/* ===== DRAG & DROP ===== */
+.poe2ph-draggable {
+  cursor: grab;
+}
+
+.poe2ph-draggable:active {
+  cursor: grabbing;
+}
+
+.poe2ph-dragging {
+  opacity: 0.45;
+  transform: scale(0.98);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.55);
+  border-color: var(--gold-deep) !important;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.poe2ph-drag-over {
+  border-color: var(--gold-mid) !important;
+  background: var(--bg-card-hover) !important;
+  box-shadow: 0 0 0 2px rgba(200,164,85,0.25), 0 3px 12px rgba(0,0,0,0.35) !important;
+  transform: translateY(-2px);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
 
 /* ===== TRASH PAPELERA ===== */
 .poe2ph-trash-bar {
