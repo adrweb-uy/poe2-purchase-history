@@ -637,9 +637,6 @@
   border-color: rgba(200, 164, 85, 0.15);
   color: var(--gold-mid);
 }
-.poe2ph-spend-badge-normal {
-  /* inherits base .poe2ph-spend-badge styles */
-}
 
 /* Card Badge */
 .poe2ph-char-badge {
