@@ -1055,7 +1055,7 @@
       if (!row) return {};
       const lines = (row.innerText || '').split('\n')
         .map(s => s.trim()).filter(s => s.length > 1 && s.length < 200);
-      return { rawText: lines.join(' | ').slice(0, 600) };
+      return { lines: lines.slice(0, 30), rawText: lines.join(' | ').slice(0, 600) };
     },
 
     _image(row) {
@@ -2065,10 +2065,12 @@
                 </select>
               </div>
 
-              ${p.stats?.rawText ? `
-              <div class="poe2ph-detail-row">
+              ${(p.stats?.lines?.length || p.stats?.rawText) ? `
+              <div class="poe2ph-detail-row poe2ph-detail-row--stats">
                 <span class="poe2ph-detail-label">Stats</span>
-                <span class="poe2ph-detail-value poe2ph-stats-text">${this._esc(p.stats.rawText.slice(0,250))}</span>
+                <div class="poe2ph-stats-lines">
+                  ${(p.stats.lines || p.stats.rawText.split(' | ')).map(l => `<div class="poe2ph-stat-line">${this._esc(l)}</div>`).join('')}
+                </div>
               </div>` : ''}
               ${p.searchUrl ? `
               <div class="poe2ph-detail-row">
@@ -2203,10 +2205,12 @@
                 <span class="poe2ph-detail-label">${t('history.category')}</span>
                 <span class="poe2ph-detail-value">${icon} ${cname}</span>
               </div>
-              ${p.stats?.rawText ? `
-              <div class="poe2ph-detail-row">
+              ${(p.stats?.lines?.length || p.stats?.rawText) ? `
+              <div class="poe2ph-detail-row poe2ph-detail-row--stats">
                 <span class="poe2ph-detail-label">Stats</span>
-                <span class="poe2ph-detail-value poe2ph-stats-text">${this._esc(p.stats.rawText.slice(0,250))}</span>
+                <div class="poe2ph-stats-lines">
+                  ${(p.stats.lines || p.stats.rawText.split(' | ')).map(l => `<div class="poe2ph-stat-line">${this._esc(l)}</div>`).join('')}
+                </div>
               </div>` : ''}
               ${p.searchUrl ? `
               <div class="poe2ph-detail-row">

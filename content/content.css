@@ -946,6 +946,10 @@
   align-items: flex-start;
 }
 
+.poe2ph-detail-row--stats {
+  align-items: flex-start;
+}
+
 .poe2ph-detail-label {
   color: var(--text-muted);
   font-size: 9px;
@@ -954,7 +958,7 @@
   letter-spacing: 0.7px;
   min-width: 56px;
   flex-shrink: 0;
-  padding-top: 2px;
+  padding-top: 4px;
   line-height: 1.4;
 }
 
@@ -966,11 +970,41 @@
   line-height: 1.4;
 }
 
-.poe2ph-stats-text {
-  font-size: 10px;
-  color: var(--text-muted);
-  line-height: 1.5;
-  font-family: monospace;
+/* ── Stats lines: one row per stat, game-tooltip style ── */
+.poe2ph-stats-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(180, 150, 80, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.poe2ph-stat-line {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  padding: 3px 8px;
+  word-break: break-word;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.12s;
+}
+
+.poe2ph-stat-line:last-child {
+  border-bottom: none;
+}
+
+.poe2ph-stat-line:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.poe2ph-stat-line:nth-child(even) {
+  background: transparent;
+}
+
+.poe2ph-stat-line:hover {
+  background: rgba(180, 150, 80, 0.07);
+  color: var(--text-primary);
 }
 
 .poe2ph-link-btn {
