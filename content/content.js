@@ -2069,7 +2069,29 @@
               <div class="poe2ph-detail-row poe2ph-detail-row--stats">
                 <span class="poe2ph-detail-label">Stats</span>
                 <div class="poe2ph-stats-lines">
-                  ${(p.stats.lines || p.stats.rawText.split(' | ')).map(l => `<div class="poe2ph-stat-line">${this._esc(l)}</div>`).join('')}
+                  ${(() => {
+                    const isTier = s => /^[PS]\d+(\s*\+\s*[PS]\d+)*$/i.test(s.trim());
+                    const rawLines = p.stats.lines || p.stats.rawText.split(' | ');
+                    const out = [];
+                    let i = 0;
+                    while (i < rawLines.length) {
+                      const cur = rawLines[i];
+                      const next = rawLines[i + 1];
+                      if (isTier(cur) && next && !isTier(next)) {
+                        // tier BEFORE stat
+                        out.push(`<div class="poe2ph-stat-line poe2ph-stat-line--tiered"><span class="poe2ph-tier-badge">${this._esc(cur.trim())}</span><span class="poe2ph-stat-text">${this._esc(next)}</span></div>`);
+                        i += 2;
+                      } else if (!isTier(cur) && next && isTier(next)) {
+                        // tier AFTER stat
+                        out.push(`<div class="poe2ph-stat-line poe2ph-stat-line--tiered"><span class="poe2ph-tier-badge">${this._esc(next.trim())}</span><span class="poe2ph-stat-text">${this._esc(cur)}</span></div>`);
+                        i += 2;
+                      } else {
+                        out.push(`<div class="poe2ph-stat-line">${this._esc(cur)}</div>`);
+                        i++;
+                      }
+                    }
+                    return out.join('');
+                  })()}
                 </div>
               </div>` : ''}
               ${p.searchUrl ? `

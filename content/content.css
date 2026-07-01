@@ -1007,6 +1007,36 @@
   color: var(--text-primary);
 }
 
+/* Tiered stat line: badge left, stat text right */
+.poe2ph-stat-line--tiered {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.poe2ph-tier-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--gold-mid);
+  background: rgba(200, 164, 85, 0.08);
+  border: 1px solid rgba(200, 164, 85, 0.22);
+  border-radius: 3px;
+  padding: 1px 5px;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.poe2ph-stat-text {
+  flex: 1;
+  text-align: right;
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
 .poe2ph-link-btn {
   background: none;
   border: none;
