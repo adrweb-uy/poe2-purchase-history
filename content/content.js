@@ -15,7 +15,7 @@
   //  CONSTANTS
   // ============================================================
 
-  const CURRENT_VERSION = '1.2.1';
+  const CURRENT_VERSION = '1.2.2';
 
   /** "Travel to Hideout" button text in all supported languages.
    *  Includes both the trade-site labels AND the in-game button text,
@@ -168,6 +168,10 @@
         panelPosition:     'Panel Position',
         panelPositionDesc: 'Choose which side of the screen the panel appears on.',
         left: 'Left', right: 'Right', reset: 'Reset',
+        defaultFavorite:     'Default Purchase Mode',
+        defaultFavoriteDesc: 'Choose whether new purchases are saved as Normal or Favorite.',
+        normal:   'Normal',
+        favorite: 'Favorite',
         export:     'Export History',
         exportDesc: 'Export your purchase history as a JSON file.',
         exportBtn:  'Export JSON',
@@ -247,6 +251,10 @@
         panelPosition:     'Posición del Panel',
         panelPositionDesc: 'Elegí en qué lado de la pantalla aparece el panel.',
         left: 'Izquierda', right: 'Derecha', reset: 'Restablecer',
+        defaultFavorite:     'Modo de Compra por Defecto',
+        defaultFavoriteDesc: 'Elegí si las compras nuevas se guardan como Normal o Favorito.',
+        normal:   'Normal',
+        favorite: 'Favorito',
         export:     'Exportar Historial',
         exportDesc: 'Exportá tu historial de compras como archivo JSON.',
         exportBtn:  'Exportar JSON',
@@ -326,6 +334,10 @@
         panelPosition:     'Posição do Painel',
         panelPositionDesc: 'Escolha em qual lado da tela o painel deve aparecer.',
         left: 'Esquerda', right: 'Direita', reset: 'Redefinir',
+        defaultFavorite:     'Modo Padrão de Compra',
+        defaultFavoriteDesc: 'Escolha se as novas compras são salvas como Normal ou Favorito.',
+        normal:   'Normal',
+        favorite: 'Favorito',
         export:     'Exportar Histórico',
         exportDesc: 'Exportar seu histórico de compras como um arquivo JSON.',
         exportBtn:  'Exportar JSON',
@@ -405,6 +417,10 @@
         panelPosition:     'Panel-Position',
         panelPositionDesc: 'Wähle, auf welcher Seite des Bildschirms das Panel angezeigt wird.',
         left: 'Links', right: 'Rechts', reset: 'Zurücksetzen',
+        defaultFavorite:     'Standard-Kaufmodus',
+        defaultFavoriteDesc: 'Wähle, ob neue Käufe als Normal oder als Favorit gespeichert werden.',
+        normal:   'Normal',
+        favorite: 'Favorit',
         export:     'Verlauf exportieren',
         exportDesc: 'Exportiere deinen Kaufverlauf als JSON-Datei.',
         exportBtn:  'JSON exportieren',
@@ -484,6 +500,10 @@
         panelPosition:     'Position du panneau',
         panelPositionDesc: 'Choisissez le côté de l’écran où le panneau s’affiche.',
         left: 'Gauche', right: 'Droite', reset: 'Réinitialiser',
+        defaultFavorite:     'Mode d’achat par défaut',
+        defaultFavoriteDesc: 'Choisissez si les nouveaux achats sont enregistrés comme Normal ou Favori.',
+        normal:   'Normal',
+        favorite: 'Favori',
         export:     'Exporter l’historique',
         exportDesc: 'Exportez votre historique d’achats dans un fichier JSON.',
         exportBtn:  'Exporter le JSON',
@@ -563,6 +583,10 @@
         panelPosition:     'Положение панели',
         panelPositionDesc: 'Выберите, с какой стороны экрана отображать панель.',
         left: 'Слева', right: 'Справа', reset: 'Сбросить',
+        defaultFavorite:     'Режим покупки по умолчанию',
+        defaultFavoriteDesc: 'Выберите, сохранять ли новые покупки как Обычное или Избранное.',
+        normal:   'Обычное',
+        favorite: 'Избранное',
         export:     'Экспорт истории',
         exportDesc: 'Экспортируйте историю покупок в виде файла JSON.',
         exportBtn:  'Экспорт JSON',
@@ -642,6 +666,10 @@
         panelPosition:     'パネル位置',
         panelPositionDesc: 'パネルを表示する画面の端を選択します。',
         left: '左', right: '右', reset: 'リセット',
+        defaultFavorite:     'デフォルト購入モード',
+        defaultFavoriteDesc: '新しい購入をノーマルまたはお気に入りとして保存するかを選択します。',
+        normal:   'ノーマル',
+        favorite: 'お気に入り',
         export:     '履歴の書き出し',
         exportDesc: '購入履歴をJSONファイルとして書き出します。',
         exportBtn:  'JSONを書き出す',
@@ -721,6 +749,10 @@
         panelPosition:     '패널 위치',
         panelPositionDesc: '패널이 표시될 화면의 방향을 선택합니다.',
         left: '왼쪽', right: '오른쪽', reset: '재설정',
+        defaultFavorite:     '기본 구매 모드',
+        defaultFavoriteDesc: '새 구매를 일반 또는 즐겨찾기로 저장할지 선택합니다.',
+        normal:   '일반',
+        favorite: '즐겨찾기',
         export:     '내역 내보내기',
         exportDesc: '구매 내역을 JSON 파일로 내보냅니다.',
         exportBtn:  'JSON 내보내기',
@@ -802,7 +834,7 @@
     },
     async getPurchases()         { return this._get('poe2ph_purchases', []); },
     async setPurchases(list)     { return this._set('poe2ph_purchases', list); },
-    async getSettings()          { return this._get('poe2ph_settings', { language: 'en', panelPosition: 'right', sidebarOpen: false, activeCharacterId: 'all' }); },
+    async getSettings()          { return this._get('poe2ph_settings', { language: 'en', panelPosition: 'right', sidebarOpen: false, activeCharacterId: 'all', defaultFavorite: false }); },
     async saveSettings(s)        { return this._set('poe2ph_settings', s); },
     async getCharacters()        { return this._get('poe2ph_characters', []); },
     async setCharacters(list)    { return this._set('poe2ph_characters', list); },
@@ -1500,6 +1532,22 @@
             </div>
           </div>
 
+          <!-- Default Purchase Mode -->
+          <div class="poe2ph-setting-card">
+            <h3 class="poe2ph-setting-title">${t('settings.defaultFavorite')}</h3>
+            <p class="poe2ph-setting-desc">${t('settings.defaultFavoriteDesc')}</p>
+            <div class="poe2ph-position-btns">
+              <button class="poe2ph-pos-btn${!this.settings.defaultFavorite ? ' poe2ph-active' : ''}" id="poe2ph-defmode-normal">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                ${t('settings.normal')}
+              </button>
+              <button class="poe2ph-pos-btn${this.settings.defaultFavorite ? ' poe2ph-active' : ''}" id="poe2ph-defmode-favorite">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                ${t('settings.favorite')}
+              </button>
+            </div>
+          </div>
+
           <!-- Export -->
           <div class="poe2ph-setting-card">
             <h3 class="poe2ph-setting-title">${t('settings.export')}</h3>
@@ -1576,6 +1624,10 @@
         btn.addEventListener('click', () => this._setPosition(btn.dataset.position)));
       $('poe2ph-reset-pos')?.addEventListener('click', () => this._setPosition('right'));
  
+      // Default purchase mode
+      $('poe2ph-defmode-normal')?.addEventListener('click', () => this._setDefaultFavorite(false));
+      $('poe2ph-defmode-favorite')?.addEventListener('click', () => this._setDefaultFavorite(true));
+
       // Export / Clear
       $('poe2ph-export-btn')?.addEventListener('click', () => this._exportHistory());
       $('poe2ph-clear-btn')?.addEventListener('click', () => this._clearHistory());
@@ -2439,6 +2491,9 @@
       const activeChar = this.settings.activeCharacterId || 'all';
       item.characterId = (activeChar === 'all' || activeChar === 'none') ? 'none' : activeChar;
 
+      // Apply default favorite mode from settings
+      item.favorite = this.settings.defaultFavorite === true;
+
       await Storage.addPurchase(item);
       this.purchases.unshift(item);
       this._renderHistory();
@@ -2447,6 +2502,16 @@
       // Auto-open panel and switch to history
       if (!this.isOpen) this._toggle();
       this._switchTab('history');
+    }
+
+    async _setDefaultFavorite(val) {
+      this.settings.defaultFavorite = val;
+      await Storage.saveSettings(this.settings);
+      // Update button active states without full rebuild
+      const normalBtn = this.shadow.getElementById('poe2ph-defmode-normal');
+      const favBtn    = this.shadow.getElementById('poe2ph-defmode-favorite');
+      if (normalBtn) normalBtn.classList.toggle('poe2ph-active', !val);
+      if (favBtn)    favBtn.classList.toggle('poe2ph-active', val);
     }
 
     // ----------------------------------------------------------
