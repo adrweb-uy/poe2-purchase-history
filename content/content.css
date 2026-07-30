@@ -638,6 +638,59 @@
   color: var(--gold-mid);
 }
 
+/* ── 3-row spend breakdown ───────────────────────── */
+.poe2ph-summary-char-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.poe2ph-summary-char-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.poe2ph-spend-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.poe2ph-spend-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border-dim);
+}
+.poe2ph-spend-row:last-child {
+  border-bottom: none;
+}
+.poe2ph-spend-row-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 68px;
+  padding-top: 2px;
+}
+.poe2ph-spend-row-total .poe2ph-spend-row-label {
+  color: var(--gold-mid);
+}
+.poe2ph-spend-row-total {
+  margin-top: 2px;
+}
+.poe2ph-spend-badges-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1;
+}
+
+
 /* Card Badge */
 .poe2ph-char-badge {
   background: rgba(200, 164, 85, 0.06);

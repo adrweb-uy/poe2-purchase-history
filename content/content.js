@@ -15,7 +15,7 @@
   //  CONSTANTS
   // ============================================================
 
-  const CURRENT_VERSION = '1.2.2';
+  const CURRENT_VERSION = '1.2.3';
 
   /** "Travel to Hideout" button text in all supported languages.
    *  Includes both the trade-site labels AND the in-game button text,
@@ -1734,75 +1734,128 @@
       // ── Spending summary ────────────────────────────────────
       const summaryEl = this.shadow.getElementById('poe2ph-spend-summary');
       if (summaryEl) {
-        const totals = {};
-        for (const p of filtered) {
-          if (p.price && p.price.amount > 0 && p.price.currency && p.price.currency !== 'unknown') {
-            totals[p.price.currency] = (totals[p.price.currency] || 0) + p.price.amount;
-          }
-        }
-        const entries = Object.entries(totals);
-        const spentText = t('settings.version') === 'Version' ? 'Spent' : 'Gastado';
+        const TIER = ['mirror','divine','exalted','chaos','regal','augmentation','transmutation',
+                      'alteration','annulment','vaal','alch','chance','blessed','scouring',
+                      'chromatic','fusing','jewellers','gemcutters','wisdom','gold'];
 
-        // Always show character header when a specific character is selected
+        // Helper: compute totals map from a list of purchases
+        const computeTotals = (list) => {
+          const totals = {};
+          for (const p of list) {
+            if (p.price && p.price.amount > 0 && p.price.currency && p.price.currency !== 'unknown') {
+              totals[p.price.currency] = (totals[p.price.currency] || 0) + p.price.amount;
+            }
+          }
+          return totals;
+        };
+
+        // Helper: build sorted badge HTML from a totals map
+        const buildBadges = (totals) => {
+          const entries = Object.entries(totals);
+          if (!entries.length) return '';
+          entries.sort((a, b) => {
+            const ai = TIER.indexOf(a[0]), bi = TIER.indexOf(b[0]);
+            if (ai !== -1 && bi !== -1) return ai - bi;
+            if (ai !== -1) return -1;
+            if (bi !== -1) return 1;
+            return b[1] - a[1];
+          });
+          return entries.map(([currency, amount]) => {
+            const display = CURRENCY_DISPLAY[currency] || currency;
+            const fmt = Number.isInteger(amount) ? amount : parseFloat(amount.toFixed(2));
+            const tier = ['mirror','divine','exalted'].includes(currency) ? 'gold'
+                       : currency === 'chaos' ? 'chaos' : 'normal';
+            return `<span class="poe2ph-spend-badge poe2ph-spend-badge-${tier}">${fmt} ${display}</span>`;
+          }).join('');
+        };
+
+        // Helper: merge two totals maps (for Total row)
+        const mergeTotals = (a, b) => {
+          const merged = { ...a };
+          for (const [k, v] of Object.entries(b)) {
+            merged[k] = (merged[k] || 0) + v;
+          }
+          return merged;
+        };
+
+        // Helper: build a single spend row
+        const buildRow = (icon, label, badgesHTML) => {
+          if (!badgesHTML) return '';
+          return `
+            <div class="poe2ph-spend-row">
+              <span class="poe2ph-spend-row-label">${icon} ${label}</span>
+              <div class="poe2ph-spend-badges poe2ph-spend-badges-inline">${badgesHTML}</div>
+            </div>
+          `;
+        };
+
+        // Split filtered into favorites and normal
+        const filteredFav    = filtered.filter(p => p.favorite);
+        const filteredNormal = filtered.filter(p => !p.favorite);
+
+        const totalsFav    = computeTotals(filteredFav);
+        const totalsNormal = computeTotals(filteredNormal);
+        const totalsAll    = mergeTotals(totalsFav, totalsNormal);
+
+        const favBadges    = buildBadges(totalsFav);
+        const normalBadges = buildBadges(totalsNormal);
+        const totalBadges  = buildBadges(totalsAll);
+
+        const hasAny = totalBadges !== '';
+
+        // Translated labels
+        const labelFav    = t('history.sectionFavorites');
+        const labelNormal = t('settings.normal');
+        const labelTotal  = 'Total';
+
         if (activeChar !== 'all' && activeChar !== 'none') {
+          // ── Specific character selected ──────────────────────
           const charObj = this.characters.find(c => c.id === activeChar);
           if (charObj) {
             const cInfo = CLASS_INFO[charObj.class] || null;
 
             const delBtnHTML = `
-              <button class="poe2ph-char-delete-btn poe2ph-summary-delete-btn" data-id="${charObj.id}" title="Delete Character" style="align-self: center; height: 32px;">
+              <button class="poe2ph-char-delete-btn poe2ph-summary-delete-btn" data-id="${charObj.id}" title="Delete Character" style="align-self:flex-start; height:32px; margin-top:2px;">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                   <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2m-6 5v6m4-6v6"/>
                 </svg>
               </button>
             `;
 
-            // Build spending badges (may be empty)
-            let badgesHTML = '';
-            if (entries.length > 0) {
-              const TIER = ['mirror','divine','exalted','chaos','regal','augmentation','transmutation',
-                            'alteration','annulment','vaal','alch','chance','blessed','scouring',
-                            'chromatic','fusing','jewellers','gemcutters','wisdom','gold'];
-              entries.sort((a, b) => {
-                const ai = TIER.indexOf(a[0]), bi = TIER.indexOf(b[0]);
-                if (ai !== -1 && bi !== -1) return ai - bi;
-                if (ai !== -1) return -1;
-                if (bi !== -1) return 1;
-                return b[1] - a[1];
-              });
-              badgesHTML = entries.map(([currency, amount]) => {
-                const display = CURRENCY_DISPLAY[currency] || currency;
-                const fmt = Number.isInteger(amount) ? amount : parseFloat(amount.toFixed(2));
-                const tier = ['mirror','divine','exalted'].includes(currency) ? 'gold'
-                           : currency === 'chaos' ? 'chaos' : 'normal';
-                return `<span class="poe2ph-spend-badge poe2ph-spend-badge-${tier}">${fmt} ${display}</span>`;
-              }).join('');
-            }
+            const spendRowsHTML = hasAny ? `
+              <div class="poe2ph-spend-rows">
+                ${buildRow('⭐', labelFav,    favBadges)}
+                ${buildRow('📦', labelNormal, normalBadges)}
+                <div class="poe2ph-spend-row poe2ph-spend-row-total">
+                  <span class="poe2ph-spend-row-label">📊 ${labelTotal}</span>
+                  <div class="poe2ph-spend-badges poe2ph-spend-badges-inline">${totalBadges}</div>
+                </div>
+              </div>
+            ` : '';
 
             if (cInfo && cInfo.portrait) {
               summaryEl.innerHTML = `
-                <div class="poe2ph-card-main" style="padding:0; background:transparent; border:none; box-shadow:none;">
-                  <div class="poe2ph-card-img-container" style="width:48px; height:48px; border-radius:4px;">
+                <div class="poe2ph-summary-char-header">
+                  <div class="poe2ph-card-img-container" style="width:48px; height:48px; border-radius:4px; flex-shrink:0;">
                     <img class="poe2ph-card-img" style="object-fit:cover; object-position:top;" src="${chrome.runtime.getURL(cInfo.portrait)}" alt="">
                   </div>
-                  <div class="poe2ph-card-info" style="display:flex; flex-direction:column; gap:6px; justify-content:center;">
-                    <div style="display:flex; align-items:baseline; gap:6px;">
-                      <span class="poe2ph-card-name" style="font-size:15px; letter-spacing:0.5px;">${charObj.name}</span>
-                      ${badgesHTML ? `<span class="poe2ph-spend-label" style="font-size:10px;">– ${spentText}</span>` : ''}
-                    </div>
-                    ${badgesHTML ? `<div class="poe2ph-spend-badges" style="margin:0;">${badgesHTML}</div>` : ''}
+                  <div class="poe2ph-summary-char-info">
+                    <span class="poe2ph-card-name" style="font-size:15px; letter-spacing:0.5px;">${charObj.name}</span>
                   </div>
                   ${delBtnHTML}
                 </div>
+                ${spendRowsHTML}
               `;
             } else {
               const emoji = cInfo?.emoji || '👤';
               summaryEl.innerHTML = `
-                <div class="poe2ph-spend-char-header">
-                  <div class="poe2ph-spend-label">${emoji} ${charObj.name}${badgesHTML ? ` – ${spentText}` : ''}</div>
+                <div class="poe2ph-summary-char-header">
+                  <div class="poe2ph-summary-char-info">
+                    <span class="poe2ph-spend-label">${emoji} ${charObj.name}</span>
+                  </div>
                   ${delBtnHTML}
                 </div>
-                ${badgesHTML ? `<div class="poe2ph-spend-badges">${badgesHTML}</div>` : ''}
+                ${spendRowsHTML}
               `;
             }
 
@@ -1816,28 +1869,17 @@
           } else {
             summaryEl.classList.add('poe2ph-hidden');
           }
-        } else if (activeChar === 'all' && entries.length > 0) {
-          // Sort: premier currencies first, then by amount
-          const TIER = ['mirror','divine','exalted','chaos','regal','augmentation','transmutation',
-                        'alteration','annulment','vaal','alch','chance','blessed','scouring',
-                        'chromatic','fusing','jewellers','gemcutters','wisdom','gold'];
-          entries.sort((a, b) => {
-            const ai = TIER.indexOf(a[0]), bi = TIER.indexOf(b[0]);
-            if (ai !== -1 && bi !== -1) return ai - bi;
-            if (ai !== -1) return -1;
-            if (bi !== -1) return 1;
-            return b[1] - a[1];
-          });
-          const badges = entries.map(([currency, amount]) => {
-            const display = CURRENCY_DISPLAY[currency] || currency;
-            const fmt = Number.isInteger(amount) ? amount : parseFloat(amount.toFixed(2));
-            const tier = ['mirror','divine','exalted'].includes(currency) ? 'gold'
-                       : currency === 'chaos' ? 'chaos' : 'normal';
-            return `<span class="poe2ph-spend-badge poe2ph-spend-badge-${tier}">${fmt} ${display}</span>`;
-          }).join('');
+        } else if (activeChar === 'all' && hasAny) {
+          // ── All characters ───────────────────────────────────
           summaryEl.innerHTML = `
-            <div class="poe2ph-spend-label" style="margin-bottom:8px;">📊 Total</div>
-            <div class="poe2ph-spend-badges">${badges}</div>
+            <div class="poe2ph-spend-rows">
+              ${buildRow('⭐', labelFav,    favBadges)}
+              ${buildRow('📦', labelNormal, normalBadges)}
+              <div class="poe2ph-spend-row poe2ph-spend-row-total">
+                <span class="poe2ph-spend-row-label">📊 ${labelTotal}</span>
+                <div class="poe2ph-spend-badges poe2ph-spend-badges-inline">${totalBadges}</div>
+              </div>
+            </div>
           `;
           summaryEl.classList.remove('poe2ph-hidden');
         } else {

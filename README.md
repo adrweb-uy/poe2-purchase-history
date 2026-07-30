@@ -74,6 +74,10 @@ Inglés · Español · Portugués · Alemán · Francés · Ruso · Japonés · 
 
 ## 📄 Historial de Cambios (Changelog)
 
+### v1.2.3 — 2026-07-30
+- **Novedad:** El resumen de gastos ahora muestra **3 renglones separados**: ⭐ **Favoritos**, 📦 **Normal** y 📊 **Total**. Cada renglón tiene sus propios badges de divisa. Los renglones vacíos (sin gasto) no se muestran. Funciona tanto cuando se selecciona un personaje específico como en la vista de "Todos los Personajes".
+- **Versión:** Actualizada a `1.2.3`.
+
 ### v1.2.2 — 2026-07-08
 - **Novedad:** **Modo de Compra por Defecto** en Ajustes — elegí si los ítems nuevos se registran como **Normal** o **Favorito** al momento de la compra. Por defecto es Normal. La preferencia se guarda de forma persistente y funciona en los 8 idiomas soportados.
 - **Versión:** Actualizada a `1.2.2`.
@@ -239,6 +243,10 @@ English · Español · Português · Deutsch · Français · Русский · �
 ---
 
 ## 📄 Changelog (EN)
+
+### v1.2.3 — 2026-07-30
+- **Feature:** The spend summary now displays **3 separate rows**: ⭐ **Favorites**, 📦 **Normal**, and 📊 **Total**. Each row shows its own currency badges. Rows with no spending are hidden. Works both when a specific character is selected and in the "All Characters" view.
+- **Version:** Bumped to `1.2.3`.
 
 ### v1.2.2 — 2026-07-08
 - **Feature:** **Default Purchase Mode** setting in the Settings tab — choose whether new items are saved as **Normal** or **Favorite** at the moment of purchase. Defaults to Normal. The preference is persisted and works across all 8 supported languages.
