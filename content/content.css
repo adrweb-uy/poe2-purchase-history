@@ -215,6 +215,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  /* Title block + collapse button sit together; no push to far edge */
 }
 
 .poe2ph-header-chest {
@@ -223,12 +224,27 @@
   border-radius: 6px;
 }
 
-/* Collapse button — right side of header */
+/* Collapse button — right side of title block (not far edge) */
+.poe2ph-header-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Title + subtitle stacked vertically */
+.poe2ph-header-titles {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
 .poe2ph-header-collapse {
-  margin-left: auto;
+  /* No margin-left: auto — sits right after the title text */
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 8px;
@@ -239,6 +255,8 @@
   align-items: center;
   justify-content: center;
   transition: background 0.2s var(--ease), border-color 0.2s, color 0.2s;
+  align-self: flex-start;
+  margin-top: 2px;
 }
 .poe2ph-header-collapse:hover {
   background: rgba(200,164,85,0.10);

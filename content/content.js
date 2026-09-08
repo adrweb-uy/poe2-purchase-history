@@ -15,7 +15,7 @@
   //  CONSTANTS
   // ============================================================
 
-  const CURRENT_VERSION = '1.2.3';
+  const CURRENT_VERSION = '1.2.4';
 
   /** "Travel to Hideout" button text in all supported languages.
    *  Includes both the trade-site labels AND the in-game button text,
@@ -1358,11 +1358,13 @@
                    src="${chrome.runtime.getURL('icons/chest_48.png')}"
                    width="44" height="44" alt="">
               <div class="poe2ph-header-text">
-                <h1 class="poe2ph-title">${t('appName')}</h1>
-                <p class="poe2ph-subtitle">${t('appSubtitle')}</p>
+                <div class="poe2ph-header-titles">
+                  <h1 class="poe2ph-title">${t('appName')}</h1>
+                  <p class="poe2ph-subtitle">${t('appSubtitle')}</p>
+                </div>
+                <button class="poe2ph-header-collapse" id="poe2ph-header-collapse"
+                        title="Collapse panel">${pos === 'right' ? '▶' : '◀'}</button>
               </div>
-              <button class="poe2ph-header-collapse" id="poe2ph-header-collapse"
-                      title="Collapse panel">${pos === 'right' ? '▶' : '◀'}</button>
             </div>
             <div class="poe2ph-header-sep"></div>
           </div>

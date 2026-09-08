@@ -74,6 +74,10 @@ Inglés · Español · Portugués · Alemán · Francés · Ruso · Japonés · 
 
 ## 📄 Historial de Cambios (Changelog)
 
+### v1.2.4 — 2026-09-08
+- **Fix UI:** El botón de colapsar panel ahora se posiciona pegado a la derecha del bloque de título ("POE2 Historial de Compras"), en lugar de estar en el extremo derecho del header. Esto evita conflictos visuales con botones de otras extensiones que ocupan el borde derecho de la pantalla.
+- **Versión:** Actualizada a `1.2.4`.
+
 ### v1.2.3 — 2026-07-30
 - **Novedad:** El resumen de gastos ahora muestra **3 renglones separados**: ⭐ **Favoritos**, 📦 **Normal** y 📊 **Total**. Cada renglón tiene sus propios badges de divisa. Los renglones vacíos (sin gasto) no se muestran. Funciona tanto cuando se selecciona un personaje específico como en la vista de "Todos los Personajes".
 - **Versión:** Actualizada a `1.2.3`.
@@ -243,6 +247,10 @@ English · Español · Português · Deutsch · Français · Русский · �
 ---
 
 ## 📄 Changelog (EN)
+
+### v1.2.4 — 2026-09-08
+- **UI Fix:** The collapse button is now positioned right next to the title block ("POE2 Purchase History") instead of being pushed to the far right edge of the panel header. This avoids visual conflicts with buttons from other extensions that occupy the right edge of the screen.
+- **Version:** Bumped to `1.2.4`.
 
 ### v1.2.3 — 2026-07-30
 - **Feature:** The spend summary now displays **3 separate rows**: ⭐ **Favorites**, 📦 **Normal**, and 📊 **Total**. Each row shows its own currency badges. Rows with no spending are hidden. Works both when a specific character is selected and in the "All Characters" view.
