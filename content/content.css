@@ -215,7 +215,6 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  /* Title block + collapse button sit together; no push to far edge */
 }
 
 .poe2ph-header-chest {
@@ -224,24 +223,16 @@
   border-radius: 6px;
 }
 
-/* Collapse button — right side of title block (not far edge) */
+/* Title + subtitle column — grows to fill space, but leaves room for the button */
 .poe2ph-header-text {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
-}
-
-/* Title + subtitle stacked vertically */
-.poe2ph-header-titles {
-  display: flex;
   flex-direction: column;
+  width: 195px;
   min-width: 0;
 }
 
+/* Collapse button — sits right after the title block */
 .poe2ph-header-collapse {
-  /* No margin-left: auto — sits right after the title text */
   flex-shrink: 0;
   width: 32px;
   height: 32px;
@@ -255,8 +246,7 @@
   align-items: center;
   justify-content: center;
   transition: background 0.2s var(--ease), border-color 0.2s, color 0.2s;
-  align-self: flex-start;
-  margin-top: 2px;
+  align-self: center;
 }
 .poe2ph-header-collapse:hover {
   background: rgba(200,164,85,0.10);
